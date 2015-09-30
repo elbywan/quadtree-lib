@@ -1,0 +1,9 @@
+{
+    "indentation": {
+        "level": "error",
+        "value": 4
+    },
+    "max_line_length": {
+        "level": "ignore"
+    }
+}

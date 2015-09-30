@@ -1,0 +1,23 @@
+language: node_js
+
+node_js:
+    - '0.12'
+    - '0.11'
+    - '0.10'
+
+branches:
+    only:
+        - master
+
+before_script:
+    - npm install -g gulp
+
+script: gulp
+
+deploy:
+    provider: npm
+    email: elbywan@hotmail.com
+    api_key:
+        secure: ll1I9lQXUGiUsmVt6QwFu2bXdDOWerKo8+FcDiRen8vl0LGLc6LbfPvS4rjezR0X2LEO/5JJnu0Fk433aLFoQg7p3BWJGt2832xYEdKXCuFvkuZwOLm9VU0WDngrfWuGmStfTcaP45jeOdzGSco0pyAGyPAX6bTbon5gAErsOspzb5Y2MoaH5igmM3v27eb3KKydvUd7MPxEHmC02hs/vI4I0jkwo0xLVHDaQGyjclZXk+cqCErUKd2XnzLyEfJR9xAmAipfd7T4BletIrmTYo3FDp6H9oHHTPaaYR4VPjomhK0unCI3dN1OHzY2EzUl/qgteE/PKliP7k1zWlYh4lVWlL0Dm9DdOxyGcgxoQWstkYfz8FjfcvxyNB/mBbXzRp4ajcg1DEKOVfzPdS/sn1/pwaXm9GplguSL7X7RrH05qOdU7AOrKpW2eS04Li5+UoWUMW5W1C9f/qHHZRU2oXfVBPl1lpeRqAZ8GcDFAmkeNILOk+/OIbrS81yjwjRNcKxacTvW39CU86QZpoHVb0Z7ewwiBLVKLKHf0vZR7egOhcA3AhTEI6h+oskUhGH2n9KK8RvmCRZvkskqtTq2DNb0cidx/q6f5nPRDBUxgjnwGde7iRE/e3iZS1a21MM1vTyOUgP0Kava+OOuh9s9kYlf3jW5/6hrGGSvrRy+IBk=
+    on:
+        tags: true

@@ -3,6 +3,7 @@ coffee      = require 'gulp-coffee'
 uglify      = require 'gulp-uglify'
 sourcemaps  = require 'gulp-sourcemaps'
 mocha       = require 'gulp-mocha'
+rename      = require 'gulp-rename'
 del         = require 'del'
 
 paths =
@@ -17,8 +18,10 @@ gulp.task 'build', () ->
     gulp.src paths.src
         .pipe sourcemaps.init()
         .pipe coffee bare: true
+        .pipe gulp.dest('build/js')
         .pipe uglify()
         .pipe sourcemaps.write()
+        .pipe rename(extname: '.min.js')
         .pipe gulp.dest 'build/js'
 
 gulp.task 'test', ['build'], () ->

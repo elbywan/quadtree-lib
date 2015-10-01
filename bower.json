@@ -5,7 +5,7 @@
         "Julien Elbaz <elbywan@hotmail.com>"
     ],
     "description": "Efficient quadtrees library written in CoffeeScript.",
-    "main": "./build/js/quadtree.js",
+    "main": "./build/js/quadtree.min.js",
     "moduleType": [
         "globals",
         "node"

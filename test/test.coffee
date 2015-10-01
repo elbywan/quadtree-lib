@@ -52,12 +52,14 @@ describe 'quadtree', () ->
         quadtree.push element2 = x: 10, y: 15, width: 5, height: 5
         quadtree.push element3 = x: 12, y: 20, width: 5, height: 5
         quadtree.push element4 = x: 0, y: 0
-        quadtree.push element5 = x: 49, y: 49
-        quadtree.push element6 = x: 50, y: 49
-        quadtree.push element7 = x: 49, y: 50
-        quadtree.push element8 = x: 50, y: 50
+        quadtree.push element5 = x: 49, y: 49, width: 1, height :1
+        quadtree.push element6 = x: 50, y: 49, width: 1, height :1
+        quadtree.push element7 = x: 49, y: 50, width: 1, height :1
+        quadtree.push element8 = x: 50, y: 50, width: 1, height :1
+        quadtree.push element9 = x: 99, y: 99
+        quadtree.push element10 = x: 99, y: 99
 
-        assert.equal quadtree.size, 9
+        assert.equal quadtree.size,11
         assert.equal (quadtree.colliding element0)[0], element1
         assert.equal (quadtree.colliding element1)[0], element0
         assert.equal (quadtree.colliding element2)[0], element3
@@ -71,6 +73,9 @@ describe 'quadtree', () ->
         for sibling in siblings
             collisions = quadtree.colliding sibling
             assert.equal collisions.length, 3
+
+        assert.equal (quadtree.colliding element9).length, 1
+        assert.equal (quadtree.colliding element10).length, 1
 
     it 'should iterate over the elements', () ->
         quadtree = new Quadtree width: 100, height: 100
@@ -89,6 +94,29 @@ describe 'quadtree', () ->
 
         quadtree.each (item) ->
             assert.ok elementArray.indexOf(item) > -1
+
+
+
+    it 'should get an element provided its coordinates and properties', () ->
+        quadtree = new Quadtree width: 10, height: 10
+        quadtree.push e0 = x: 1, y: 0
+        quadtree.push e1 = x: 0, y: 1
+        quadtree.push e2 = x: 2, y: 1
+        quadtree.push e3 = x: 4, y: 5
+        quadtree.push e3bis = x: e3.x, y: e3.y, content: 'toto'
+        quadtree.push big = x: 0, y: 0, width: 10, height: 10
+
+        assert.equal quadtree.get(x: e0.x, y: e0.y).length, 1
+        assert.equal quadtree.get(x: e0.x, y: e0.y)[0], e0
+        assert.equal quadtree.get(x: e1.x, y: e1.y).length, 1
+        assert.equal quadtree.get(x: e1.x, y: e1.y)[0], e1
+        assert.equal quadtree.get(x: e2.x, y: e2.y).length, 1
+        assert.equal quadtree.get(x: e2.x, y: e2.y)[0], e2
+        assert.equal quadtree.get(x: e3.x, y: e3.y).length, 2
+        assert.equal quadtree.get(x: e3.x, y: e3.y)[1], e3
+        assert.equal quadtree.get(x: e3.x, y: e3.y)[0], e3bis
+        assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto').length, 1
+        assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto')[0], e3bis
 
     it 'should add, list and remove a random number of elements properly', () ->
         times = randomNb 1000, 2000
@@ -134,7 +162,7 @@ describe 'quadtree', () ->
         for element in elementArray
             quadtree.remove element
 
-        assert quadtree.size, 0
+        assert.equal quadtree.size, 0
 
         copycat.each (element) ->
             assert.ok(element.x > 50)
@@ -159,3 +187,19 @@ describe 'quadtree', () ->
             i += @oversized.length + @contents.length
 
         assert.equal i, 5
+
+    it 'should have the correct maximum elements by leaf', () ->
+        quadtree  = new Quadtree width: 100, height: 100
+        quadtree2 = new Quadtree width: 100, height: 100, maxElements: 2
+
+        elementArray = [
+            element0 = x: 49, y: 49,
+            element1 = x: 10, y: 10,
+            element2 = x: 55, y: 55 ]
+
+        for element in elementArray
+            quadtree.push element
+            quadtree2.push element
+
+        assert.equal quadtree.children["NW"].tree.contents.length, 0
+        assert.equal quadtree2.children["NW"].tree.contents.length, 2

@@ -8,7 +8,7 @@ randomNb = (min, max) ->
 describe 'quadtree', () ->
     @.timeout 60000
 
-    heavyFunction = (times, size) ->
+    perfFunction = (times, size) ->
         quadtree = new Quadtree width: size, height: size
 
         startingTime = new Date()
@@ -67,16 +67,16 @@ describe 'quadtree', () ->
         console.log "\t#{new Date().getTime() - startingTime.getTime()} ms elapsed."
 
     it 'should add, clone and iterate on a thousand random elements inside a 1024*1024 quadtree', () ->
-        heavyFunction 1000, 1024
+        perfFunction 1000, 1024
 
     it 'should add, clone and iterate on ten thousand random elements inside a 1024*1024 quadtree', () ->
-        heavyFunction 10000, 1024
+        perfFunction 10000, 1024
 
     it 'should add, clone and iterate on ten thousand random elements inside a 2048*2048 quadtree', () ->
-        heavyFunction 10000, 1024
+        perfFunction 10000, 1024
 
     it 'should add, clone and iterate on hundred thousand random elements inside a 2048*2048 quadtree', () ->
-        heavyFunction 100000, 2048
+        perfFunction 100000, 2048
 
     it 'should add, clone and iterate on a million of random elements inside a 2048*2048 quadtree', () ->
-        heavyFunction 1000000, 2048
+        perfFunction 1000000, 2048

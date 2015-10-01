@@ -1,12 +1,15 @@
 class Quadtree
-    constructor: ({@x, @y, @width, @height}) ->
+    constructor: ({@x, @y, @width, @height, @maxElements}) ->
         throw new Error "Missing quadtree dimensions." if not @width? or not @height?
-        throw new Error "Dimensions must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
         @x ?= 0
         @y ?= 0
+        @maxElements ?= 1
         @contents = []
         @oversized = []
         @size = 0
+
+        throw new Error "Dimensions must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
+        throw new Error "The maximum of elements by leaf must be a positive integer." if @maxElements < 1
 
         that = @
 
@@ -18,6 +21,7 @@ class Quadtree
                         y: that.y
                         width: Math.max (Math.floor that.width / 2), 1
                         height: Math.max (Math.floor that.height / 2), 1
+                        maxElements: that.maxElements
                     })
                 tree: null
             "NE":
@@ -27,6 +31,7 @@ class Quadtree
                         y: that.y
                         width: Math.ceil that.width / 2
                         height: Math.max (Math.floor that.height / 2), 1
+                        maxElements: that.maxElements
                     })
                 tree: null
             "SW":
@@ -34,8 +39,9 @@ class Quadtree
                     new Quadtree({
                         x: that.x
                         y: that.y + Math.min (Math.floor that.height / 2), 1
-                        width: Math.min (Math.floor that.width / 2), 1
+                        width: Math.max (Math.floor that.width / 2), 1
                         height: Math.ceil that.height / 2
+                        maxElements: that.maxElements
                     })
                 tree: null
             "SE":
@@ -45,6 +51,7 @@ class Quadtree
                         y: that.y + Math.max (Math.floor that.height / 2), 1
                         width: Math.ceil that.width / 2
                         height: Math.ceil that.height / 2
+                        maxElements: that.maxElements
                     })
                 tree: null
         }
@@ -61,8 +68,8 @@ class Quadtree
     validateElement = (element) ->
         if not typeof element is "object" or not element.x? or not element.y? or element.x < 0 or element.y < 0
             throw new Error "Object must contain x or y positions as arguments, and they must be positive integers."
-        if element?.width < 1 or element?.height < 1
-            throw new Error "Width and height arguments must be greater than 0."
+        if element?.width < 0 or element?.height < 0
+            throw new Error "Width and height arguments must be positive integers."
 
     calculateDirection = (element, tree) ->
         element
@@ -77,9 +84,9 @@ class Quadtree
 
     isOversized = (element, tree) ->
         element.x < tree.x or
-        element.x + (element.width ? 1) >= tree.x + tree.width or
+        element.x + (element.width ? 0) >= tree.x + tree.width or
         element.y < tree.y or
-        element.y + (element.height ? 1) >= tree.y + tree.height
+        element.y + (element.height ? 0) >= tree.y + tree.height
 
     ## Exposed methods ##
 
@@ -100,9 +107,8 @@ class Quadtree
             if tree.width is 1 or tree.height is 1 or isOversized element, relatedChild.create()
                 tree.oversized.push element
 
-            else if tree.size is 1
+            else if tree.size <= tree.maxElements
                 tree.contents.push element
-
 
             else
                 fifo.push tree: relatedChild.get(), element: element
@@ -144,10 +150,10 @@ class Quadtree
         # Default rectangle collision
         if not collisionFunction?
             collisionFunction = (elt1, elt2) ->
-                not(elt1.x > elt2.x + (elt2.width ? 1)      or
-                    elt1.x + (elt1.width ? 1) < elt2.x      or
-                    elt1.y > elt2.y + (elt2.height ? 1)     or
-                    elt1.y + (elt1.height ? 1) < elt2.y)
+                not(elt1.x > elt2.x + (elt2.width ? 0)      or
+                    elt1.x + (elt1.width ? 0) < elt2.x      or
+                    elt1.y > elt2.y + (elt2.height ? 0)     or
+                    elt1.y + (elt1.height ? 0) < elt2.y)
 
         items = []
         fifo = [@]
@@ -155,16 +161,44 @@ class Quadtree
         while fifo.length > 0
             top = fifo.splice(0, 1)[0]
 
-            for elt in top.oversized then if elt isnt item and collisionFunction item, elt then items.push elt
-            for elt in top.contents  then if elt isnt item and collisionFunction item, elt then items.push elt
+            for elt in top.oversized when elt isnt item and collisionFunction item, elt then items.push elt
+            for elt in top.contents  when elt isnt item and collisionFunction item, elt then items.push elt
 
-            relatedChild = top.children[calculateDirection item, @]
+            relatedChild = top.children[calculateDirection item, top]
 
             if isOversized item, relatedChild.create()
                 for child of top.children when top.children[child].tree?
                     fifo.push top.children[child].tree
 
             else if relatedChild.tree?
+                fifo.push relatedChild.tree
+
+        items
+
+    get: (params) ->
+        @where params
+
+    where: (params) ->
+        validateElement params
+
+        items = []
+        fifo = [@]
+
+        while fifo.length > 0
+            top = fifo.splice(0, 1)[0]
+
+            for elt in top.oversized
+                check = true
+                for key of params when params[key] isnt elt[key] then check = false
+                items.push elt if check
+            for elt in top.contents
+                check = true
+                for key of params when params[key] isnt elt[key] then check = false
+                items.push elt if check
+
+            relatedChild = top.children[calculateDirection params, top]
+
+            if relatedChild.tree?
                 fifo.push relatedChild.tree
 
         items
@@ -181,9 +215,22 @@ class Quadtree
                 fifo.push top.children[child].tree
         @
 
+    find: (predicate) ->
+        fifo = [@]
+        items = []
+
+        while fifo.length > 0
+            top = fifo.splice(0, 1)[0]
+            for i in top.oversized when predicate?(i) then items.push i
+            for i in top.contents when predicate?(i) then items.push i
+
+            for child of top.children when top.children[child].tree?
+                fifo.push top.children[child].tree
+        items
+
     filter: (validate) ->
         deepclone = (target) ->
-            copycat = new Quadtree x: target.x, y: target.y, width: target.width, height: target.height
+            copycat = new Quadtree x: target.x, y: target.y, width: target.width, height: target.height, maxElements: target.maxElements
             copycat.size = 0
             for child of target.children when target.children[child].tree?
                 copycat.children[child].tree = deepclone target.children[child].tree

@@ -31,3 +31,4 @@ node_modules
 *.bak
 bower_components
 .jshintrc
+/demo

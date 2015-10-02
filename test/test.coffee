@@ -113,8 +113,8 @@ describe 'quadtree', () ->
         assert.equal quadtree.get(x: e2.x, y: e2.y).length, 1
         assert.equal quadtree.get(x: e2.x, y: e2.y)[0], e2
         assert.equal quadtree.get(x: e3.x, y: e3.y).length, 2
-        assert.equal quadtree.get(x: e3.x, y: e3.y)[1], e3
-        assert.equal quadtree.get(x: e3.x, y: e3.y)[0], e3bis
+        assert.equal quadtree.get(x: e3.x, y: e3.y)[0], e3
+        assert.equal quadtree.get(x: e3.x, y: e3.y)[1], e3bis
         assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto').length, 1
         assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto')[0], e3bis
 

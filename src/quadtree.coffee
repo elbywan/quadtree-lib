@@ -38,7 +38,7 @@ class Quadtree
                 create: () ->
                     new Quadtree({
                         x: that.x
-                        y: that.y + Math.min (Math.floor that.height / 2), 1
+                        y: that.y + Math.max (Math.floor that.height / 2), 1
                         width: Math.max (Math.floor that.width / 2), 1
                         height: Math.ceil that.height / 2
                         maxElements: that.maxElements

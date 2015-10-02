@@ -73,7 +73,7 @@ describe 'quadtree', () ->
         perfFunction 10000, 1024
 
     it 'should add, clone and iterate on ten thousand random elements inside a 2048*2048 quadtree', () ->
-        perfFunction 10000, 1024
+        perfFunction 10000, 2048
 
     it 'should add, clone and iterate on hundred thousand random elements inside a 2048*2048 quadtree', () ->
         perfFunction 100000, 2048

@@ -49,7 +49,7 @@ var quadtree = new Quadtree({
 
 `width` and `height` are mandatory attributes.
 
-`maxElements` is the maximum number of elements contained in a leaf before it splits into child trees. **Default to 1.**
+`maxElements` is the maximum number of elements contained in a leaf before it splits into child trees. **defaults to 1.**
 
 ### Adding elements
 
@@ -59,8 +59,8 @@ Elements must be objects, with coordinates set.
 quadtree.push({
     x: 10,      //Mandatory
     y: 10,      //Mandatory
-    width: 1,   //Optional, default to 0
-    height: 2   //Optional, default to 0
+    width: 1,   //Optional, defaults to 0
+    height: 2   //Optional, defaults to 0
 })
 ```
 
@@ -78,7 +78,7 @@ Filters the quadtree and returns a **clone** containing only the elements determ
 
 ```javascript
 var filtered = quadtree.filter(function(element){
-    element.x > 50
+    return element.x > 50
 }
 ```
 

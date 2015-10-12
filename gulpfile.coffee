@@ -4,12 +4,15 @@ uglify      = require 'gulp-uglify'
 sourcemaps  = require 'gulp-sourcemaps'
 mocha       = require 'gulp-mocha'
 rename      = require 'gulp-rename'
+docco       = require 'gulp-docco'
+minifyHTML  = require 'gulp-minify-html'
 del         = require 'del'
 
 paths =
     src: ['src/**/*.coffee']
     test: ['test/*.coffee']
     perf: ['test/perf/*.coffee']
+    docindex: ['documentation/quadtree.html']
 
 gulp.task 'clean', () ->
     del ['build']
@@ -21,7 +24,7 @@ gulp.task 'build', () ->
         .pipe gulp.dest('build/js')
         .pipe uglify()
         .pipe sourcemaps.write()
-        .pipe rename(extname: '.min.js')
+        .pipe rename extname: '.min.js'
         .pipe gulp.dest 'build/js'
 
 gulp.task 'test', ['build'], () ->
@@ -34,5 +37,15 @@ gulp.task 'perf', ['build'], () ->
 
 gulp.task 'watch', () ->
     gulp.watch [paths.src, paths.test], ['build', 'test']
+
+gulp.task 'generatedoc', () ->
+    gulp.src paths.src
+        .pipe docco layout: 'linear'
+        .pipe gulp.dest './documentation'
+
+gulp.task 'doc', ['generatedoc'], () ->
+    gulp.src paths.docindex
+        .pipe rename 'index.html'
+        .pipe gulp.dest './documentation'
 
 gulp.task 'default', ['test']

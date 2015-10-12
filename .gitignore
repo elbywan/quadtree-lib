@@ -32,3 +32,4 @@ node_modules
 bower_components
 .jshintrc
 /demo
+/documentation

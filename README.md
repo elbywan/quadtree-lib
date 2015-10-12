@@ -110,7 +110,7 @@ var colliding = quadtree.colliding({
 
 ### Retrieve by properties
 
-Gets every element that matches the parameter properties.
+Gets every element that match the parameter properties.
 
 ```javascript
 quadtree.push({x: 0, y: 0, animal: 'rabbit'})
@@ -153,9 +153,9 @@ quadtree.visit(function(){
 
 ## Further documentation
 
->Todo with [Docco](https://jashkenas.github.io/docco/)
+You can find the annotated source code [here](http://elbywan.github.io/quadtree-lib/).
 
-Meanwhile, you can check the test folder for code samples.
+*Generated with Docco.*
 
 ## License
 

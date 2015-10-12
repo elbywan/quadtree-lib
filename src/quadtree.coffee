@@ -1,5 +1,21 @@
+# quadtree-lib
+# ============
+#
+# **Quadtree-lib** is an easy to use, developer friendly quadtree library
+# which contains many helper methods to add, remove, iterate, filter, simulate
+# collisions over 2d elements and more.
+#
+# The Quadtree class.
+# -------------------
 class Quadtree
+    # ### Constructor
+
+    # A quadtree is built with 5 main parameters :
+    # - x & y coordinates which are always (0,0) for the root tree.
+    # - its dimensions (width & length), mandatory.
+    # - the maximum number of elements before it 'splits' into subtrees. (defaults to 1)
     constructor: ({@x, @y, @width, @height, @maxElements}) ->
+        # An error is thrown when the width & length are not passed as constructor arguments.
         throw new Error "Missing quadtree dimensions." if not @width? or not @height?
         @x ?= 0
         @y ?= 0
@@ -8,12 +24,15 @@ class Quadtree
         @oversized = []
         @size = 0
 
+        # Dimension & coordinates are checked, and en error is thrown in case of bad input.
         throw new Error "Dimensions must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
         throw new Error "The maximum of elements by leaf must be a positive integer." if @maxElements < 1
 
         that = @
 
+        # The subtrees list, by position. Contains the subtree, a creation method with proper coordinates & dimensions and a getter.
         @children = {
+            # Northwest tree.
             "NW":
                 create: () ->
                     new Quadtree({
@@ -24,6 +43,7 @@ class Quadtree
                         maxElements: that.maxElements
                     })
                 tree: null
+            # Northeast tree.
             "NE":
                 create: () ->
                     new Quadtree({
@@ -34,6 +54,7 @@ class Quadtree
                         maxElements: that.maxElements
                     })
                 tree: null
+            # Southwest tree.
             "SW":
                 create: () ->
                     new Quadtree({
@@ -44,6 +65,7 @@ class Quadtree
                         maxElements: that.maxElements
                     })
                 tree: null
+            # Southeast tree.
             "SE":
                 create: () ->
                     new Quadtree({
@@ -55,22 +77,26 @@ class Quadtree
                     })
                 tree: null
         }
+        # Adding a getter which also creates the tree if needed.
         for child of @children
             @children[child].get = () ->
                 if @tree? then @tree else @tree = @create(); @tree
 
-    ## Internal methods & vars ##
+    # ### Internal methods & vars
 
+    # Retrieves the center coordinates of an element.
     getCenter = (item) ->
         x: Math.floor((item.width  ? 1) / 2) + item.x
         y: Math.floor((item.height ? 1) / 2) + item.y
 
+    # Validates an element of the quadtree, by checking its properties for x & y coordinates, and proper value.
     validateElement = (element) ->
         if not typeof element is "object" or not element.x? or not element.y? or element.x < 0 or element.y < 0
             throw new Error "Object must contain x or y positions as arguments, and they must be positive integers."
         if element?.width < 0 or element?.height < 0
             throw new Error "Width and height arguments must be positive integers."
 
+    # Calculates the direction of the subtree which an element belongs to.
     calculateDirection = (element, tree) ->
         element
         quadCenter = getCenter tree
@@ -82,14 +108,16 @@ class Quadtree
             if element.y < quadCenter.y then "NE"
             else "SE"
 
+    # Determines if an element is oversized. An oversized element is an element 'too big' to fit into subtrees.
     isOversized = (element, tree) ->
         element.x < tree.x or
         element.x + (element.width ? 0) >= tree.x + tree.width or
         element.y < tree.y or
         element.y + (element.height ? 0) >= tree.y + tree.height
 
-    ## Exposed methods ##
+    # ### Exposed methods
 
+    # Add an element to the quadtree.
     push: (item) ->
         validateElement item
 
@@ -119,6 +147,7 @@ class Quadtree
                 tree.contents = []
         @
 
+    # Removes an element from the quadtree.
     remove: (item) ->
         validateElement item
 
@@ -144,10 +173,19 @@ class Quadtree
         else
             false
 
+    # Returns an array of elements which collides with `item` provided`.
+
+    # `item` is an object having x, y, width & height properties.
+
+    # The default collision function is a basic bounding box algorithm. You can change it by providing a function as a second argument.
+    #```javascript
+    #colliding({x: 10, y: 20}, function(element1, element2){
+    #    return //Predicate
+    #})
+    #```
     colliding: (item, collisionFunction) ->
         validateElement item
 
-        # Default rectangle collision
         if not collisionFunction?
             collisionFunction = (elt1, elt2) ->
                 not(elt1.x > elt2.x + (elt2.width ? 0)      or
@@ -175,9 +213,10 @@ class Quadtree
 
         items
 
+    # Alias of `where`.
     get: (params) ->
         @where params
-
+    # Returns an array of elements that match the parameter properties.
     where: (params) ->
         validateElement params
 
@@ -203,6 +242,10 @@ class Quadtree
 
         items
 
+    # For each element, performs `action` where `action` is a function.
+    #```javascript
+    #quad.each(function(item){ console.log(item) })
+    #```
     each: (action) ->
         fifo = [@]
 
@@ -215,6 +258,7 @@ class Quadtree
                 fifo.push top.children[child].tree
         @
 
+    # Returns an array of elements which validate the predicate.
     find: (predicate) ->
         fifo = [@]
         items = []
@@ -228,7 +272,8 @@ class Quadtree
                 fifo.push top.children[child].tree
         items
 
-    filter: (validate) ->
+    # Returns a **cloned** `Quadtree` object which contains only the elements that validate the predicate.
+    filter: (predicate) ->
         deepclone = (target) ->
             copycat = new Quadtree x: target.x, y: target.y, width: target.width, height: target.height, maxElements: target.maxElements
             copycat.size = 0
@@ -236,9 +281,9 @@ class Quadtree
                 copycat.children[child].tree = deepclone target.children[child].tree
                 copycat.size += copycat.children[child].tree?.size ? 0
 
-            for item in target.oversized when not validate? or validate?(item)
+            for item in target.oversized when not predicate? or predicate?(item)
                 copycat.oversized.push item
-            for item in target.contents when not validate? or validate?(item)
+            for item in target.contents when not predicate? or predicate?(item)
                 copycat.contents.push item
 
             copycat.size += copycat.oversized.length + copycat.contents.length
@@ -246,6 +291,8 @@ class Quadtree
 
         deepclone @
 
+    # Visits each tree & subtree contained in the `Quadtree` object.
+    # For each node, performs the `action` function, inside which `this`is binded to the node tree object.
     visit: (action) ->
         fifo = [@]
 
@@ -257,4 +304,5 @@ class Quadtree
                 fifo.push that.children[child].tree
         @
 
+# Require export.
 module?.exports = Quadtree

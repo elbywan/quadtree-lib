@@ -342,7 +342,7 @@ Quadtree = (function() {
     return items;
   };
 
-  Quadtree.prototype.filter = function(validate) {
+  Quadtree.prototype.filter = function(predicate) {
     var deepclone;
     deepclone = function(target) {
       var child, copycat, item, j, k, len, len1, ref, ref1, ref2, ref3;
@@ -364,14 +364,14 @@ Quadtree = (function() {
       ref2 = target.oversized;
       for (j = 0, len = ref2.length; j < len; j++) {
         item = ref2[j];
-        if ((validate == null) || (typeof validate === "function" ? validate(item) : void 0)) {
+        if ((predicate == null) || (typeof predicate === "function" ? predicate(item) : void 0)) {
           copycat.oversized.push(item);
         }
       }
       ref3 = target.contents;
       for (k = 0, len1 = ref3.length; k < len1; k++) {
         item = ref3[k];
-        if ((validate == null) || (typeof validate === "function" ? validate(item) : void 0)) {
+        if ((predicate == null) || (typeof predicate === "function" ? predicate(item) : void 0)) {
           copycat.contents.push(item);
         }
       }

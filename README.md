@@ -1,12 +1,16 @@
 # | quadtree-lib | [![Build Status](https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master)](https://travis-ci.org/elbywan/quadtree-lib) |
 
-<img alt="quatree gif" src="assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px">
+<a href="http://elbywan.github.io/quadtree-lib/demo/" target="_blank">
+    <img alt="quatree gif" src="assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px"/>
+</a>
 
 Quadtree-lib is an easy to use, developer friendly quadtree library which contains many helper methods to add, remove, iterate, filter, simulate collisions over 2d elements and more.
 
 If you are already familiar with quadtrees, then you should perfectly understand how to use this library.
 
 Otherwise, there are many online articles ([wikipedia does the job](https://en.wikipedia.org/wiki/Quadtree)) which explain the advantages of using the quadtree datastructure in certain situations.
+
+[Here](http://elbywan.github.io/quadtree-lib/demo/) is a small demo of the library in action.
 
 ## Setup
 

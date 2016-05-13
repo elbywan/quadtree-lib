@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <script src="quadtree.min.js"></script>
         <style>
             * { margin: 0; padding: 0;}
@@ -64,12 +65,13 @@
         <!--canvas id="layer_canvas" onclick="toggleLoop()" oncontextmenu="init(); return false"
             onmousemove="hoverMouse(event)" onmouseleave="unregisterMouse()"></canvas-->
         <canvas id="layer_canvas" onclick="addElements()" oncontextmenu="init(); return false"
-            onmousemove="hoverMouse(event)" onmouseleave="unregisterMouse()"></canvas>
+            onmousemove="hoverMouse(event)" onmouseleave="unregisterMouse()"
+            ontouchmove="hoverMouse(event)"></canvas>
         <strong id='counter'></strong>
-        <div id="notice">
+        <div id="notice" ontouchstart="closeNotice(event)">
             <span class="notice-text">
                 <span class="highlight">Left click</span> to add elements, <span class="highlight">Right click</span> to reset, <span class="highlight">Mouseover</span> to highlight collisions.<br>
-                <span class="hoverHighlight" onclick="closeNotice()">Click here to close this message.</span>
+                <span class="hoverHighlight" onclick="closeNotice(event)">Click here to close this message.</span>
             </span>
 
         </div>
@@ -108,8 +110,9 @@
                 updateLayer()
             });
 
-            var closeNotice = function(){
+            var closeNotice = function(event){
                 notice.parentElement.removeChild(notice)
+                event.stopPropagation()
             }
 
             var updateCounter = function(){
@@ -235,8 +238,12 @@
                     updateLayer()
             }
             var hoverMouse = function(event){
-                mousePos = { x: event.clientX, y: event.clientY }
+                mousePos = {
+                    x: event.clientX || event.changedTouches[0].pageX,
+                    y: event.clientY || event.changedTouches[0].pageY
+                }
                 event.stopPropagation()
+                event.preventDefault()
                 if(!loopRef)
                     updateLayer()
             }

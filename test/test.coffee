@@ -203,3 +203,41 @@ describe 'quadtree', () ->
 
         assert.equal quadtree.children["NW"].tree.contents.length, 0
         assert.equal quadtree2.children["NW"].tree.contents.length, 2
+
+    it 'should update the quadtree if an element dimensions or position is manually updated', () ->
+        quadtree  = new Quadtree width: 100, height: 100
+
+        elementArray = [
+            element0 = x: 0, y: 0,
+            element1 = x: 1, y: 1,
+            element2 = x: 2, y: 2 ]
+
+        for element in elementArray
+            quadtree.push element, true
+
+        assert.equal quadtree.size, 3
+        assert.equal quadtree.children["NW"].tree.size, 3
+        assert.equal quadtree.oversized.indexOf(element0), -1
+
+        element0.x = 70
+
+        assert.equal quadtree.size, 3
+        assert.equal quadtree.children["NW"].tree.size, 2
+        assert.equal quadtree.children["NE"].tree.size, 1
+        assert.equal quadtree.oversized.indexOf(element0), -1
+
+        element0.y = 70
+
+        assert.equal quadtree.size, 3
+        assert.equal quadtree.children["NW"].tree.size, 2
+        assert.equal quadtree.children["SE"].tree.size, 1
+        assert.equal quadtree.oversized.indexOf(element0), -1
+
+        element0.x = 0
+        element0.y = 0
+        element0.width = 60
+        element0.height = 60
+
+        assert.equal quadtree.size, 3
+        assert.equal quadtree.children["NW"].tree.size, 2
+        assert.equal quadtree.oversized.indexOf(element0), 0

@@ -1,7 +1,7 @@
 var Quadtree;
 
 Quadtree = (function() {
-  var calculateDirection, getCenter, isOversized, validateElement;
+  var calculateDirection, getCenter, isOversized, observe, validateElement;
 
   function Quadtree(arg) {
     var child, that;
@@ -131,9 +131,34 @@ Quadtree = (function() {
     return element.x < tree.x || element.x + ((ref = element.width) != null ? ref : 0) >= tree.x + tree.width || element.y < tree.y || element.y + ((ref1 = element.height) != null ? ref1 : 0) >= tree.y + tree.height;
   };
 
-  Quadtree.prototype.push = function(item) {
+  observe = function(item, tree) {
+    var writeAccessors;
+    writeAccessors = function(propName) {
+      item["_" + propName] = item[propName];
+      return Object.defineProperty(item, propName, {
+        set: function(val) {
+          tree.remove(this);
+          this["_" + propName] = val;
+          return tree.push(this);
+        },
+        get: function() {
+          return this["_" + propName];
+        },
+        configurable: true
+      });
+    };
+    writeAccessors("x");
+    writeAccessors("y");
+    writeAccessors("width");
+    return writeAccessors("height");
+  };
+
+  Quadtree.prototype.push = function(item, enableObserve) {
     var c, element, fifo, j, len, ref, relatedChild, top, tree;
     validateElement(item);
+    if (enableObserve) {
+      observe(item, this);
+    }
     fifo = [
       {
         tree: this,

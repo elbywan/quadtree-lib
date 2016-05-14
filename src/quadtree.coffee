@@ -115,11 +115,31 @@ class Quadtree
         element.y < tree.y or
         element.y + (element.height ? 0) >= tree.y + tree.height
 
+    # Add getters and setters for coordinates and dimensions properties in order to automatically reorganize the elements into the quadtree on change.
+    observe = (item, tree) ->
+        writeAccessors = (propName) ->
+            item["_#{propName}"] = item[propName]
+            Object.defineProperty item, propName, {
+                set: (val) ->
+                    tree.remove @
+                    @["_#{propName}"] = val
+                    tree.push @
+                get: ->
+                    @["_#{propName}"]
+                configurable: true
+            }
+        writeAccessors "x"
+        writeAccessors "y"
+        writeAccessors "width"
+        writeAccessors "height"
+
     # ### Exposed methods
 
     # Add an element to the quadtree.
-    push: (item) ->
+    # Elements can be observed to reorganize them into the quadtree automatically when their coordinates or dimensions are manually changed (for ex. obj.x = ...).
+    push: (item, enableObserve) ->
         validateElement item
+        observe item, @ if enableObserve
 
         fifo = [tree: @, element: item]
 

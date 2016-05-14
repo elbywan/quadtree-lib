@@ -59,13 +59,17 @@ var quadtree = new Quadtree({
 
 Elements must be objects, with coordinates set.
 
+Optionally, you can pass a boolean argument which, if set to True, will remove/push the object into the quadtree each time its coordinates or dimensions are set `(ex: item.x = ... or item.width = ...)`.
+
+*Without this flag, x / y / width / height properties should **not** be changed  after insertion.*
+
 ```javascript
 quadtree.push({
     x: 10,      //Mandatory
     y: 10,      //Mandatory
     width: 1,   //Optional, defaults to 0
     height: 2   //Optional, defaults to 0
-})
+}, true) //Optional, defaults to false
 ```
 
 ### Removing elements

@@ -95,8 +95,6 @@ describe 'quadtree', () ->
         quadtree.each (item) ->
             assert.ok elementArray.indexOf(item) > -1
 
-
-
     it 'should get an element provided its coordinates and properties', () ->
         quadtree = new Quadtree width: 10, height: 10
         quadtree.push e0 = x: 1, y: 0
@@ -117,6 +115,7 @@ describe 'quadtree', () ->
         assert.equal quadtree.get(x: e3.x, y: e3.y)[1], e3bis
         assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto').length, 1
         assert.equal quadtree.where(x: e3bis.x, y: e3bis.y, content: 'toto')[0], e3bis
+        assert.equal quadtree.find((item) -> item.content is 'toto')[0], e3bis
 
     it 'should add, list and remove a random number of elements properly', () ->
         times = randomNb 1000, 2000

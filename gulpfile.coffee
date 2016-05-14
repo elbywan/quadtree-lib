@@ -3,6 +3,7 @@ coffee      = require 'gulp-coffee'
 uglify      = require 'gulp-uglify'
 sourcemaps  = require 'gulp-sourcemaps'
 mocha       = require 'gulp-mocha'
+istanbul    = require 'gulp-istanbul'
 rename      = require 'gulp-rename'
 docco       = require 'gulp-docco'
 minifyHTML  = require 'gulp-minify-html'
@@ -27,9 +28,15 @@ gulp.task 'build', () ->
         .pipe rename extname: '.min.js'
         .pipe gulp.dest 'build/js'
 
+
 gulp.task 'test', ['build'], () ->
-    gulp.src paths.test, read: false
-        .pipe mocha reporter: 'nyan'
+    gulp.src 'build/js/quadtree.js'
+        .pipe istanbul()
+        .pipe istanbul.hookRequire()
+        .on 'finish', ->
+            gulp.src paths.test, read: false
+            .pipe mocha reporter: 'nyan'
+            .pipe istanbul.writeReports()
 
 gulp.task 'perf', ['build'], () ->
     gulp.src paths.perf, read: false

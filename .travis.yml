@@ -17,6 +17,9 @@ before_script:
 
 script: gulp
 
+after_success:
+    - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
+
 deploy:
     provider: npm
     email: elbywan@hotmail.com

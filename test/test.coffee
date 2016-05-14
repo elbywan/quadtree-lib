@@ -156,18 +156,23 @@ describe 'quadtree', () ->
         for element in elementArray
             quadtree.push element
 
-        copycat = quadtree.filter (element) ->
+        copycatFilter = quadtree.filter (element) ->
             element.x > 50
+        copycatReject = quadtree.reject (element) ->
+            element.width > 5
 
         for element in elementArray
             quadtree.remove element
 
         assert.equal quadtree.size, 0
 
-        copycat.each (element) ->
+        copycatFilter.each (element) ->
             assert.ok(element.x > 50)
+        copycatReject.each (element) ->
+            assert.ok(element.width ? 1 <= 5)
 
-         assert.equal copycat.size, 2
+        assert.equal copycatFilter.size, 2
+        assert.equal copycatReject.size, 3
 
     it 'should be visitable', () ->
         quadtree = new Quadtree width: 100, height: 100

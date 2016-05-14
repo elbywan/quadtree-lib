@@ -4,13 +4,19 @@
     <img alt="quatree gif" src="assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px"/>
 </a>
 
-Quadtree-lib is an easy to use, developer friendly quadtree library which contains many helper methods to add, remove, iterate, filter, simulate collisions over 2d elements and more.
+Quadtree-lib is an easy to use, developer friendly quadtree library which
+contains many helper methods to add, remove, iterate, filter, simulate
+collisions over 2d elements and more.
 
-If you are already familiar with quadtrees, then you should perfectly understand how to use this library.
+If you are already familiar with quadtrees, then you should perfectly understand
+how to use this library.
 
-Otherwise, there are many online articles ([wikipedia does the job](https://en.wikipedia.org/wiki/Quadtree)) which explain the advantages of using the quadtree datastructure in certain situations.
+Otherwise, there are many online articles
+([wikipedia does the job](https://en.wikipedia.org/wiki/Quadtree)) which explain
+the advantages of using the quadtree datastructure in certain situations.
 
-[Here](http://elbywan.github.io/quadtree-lib/demo/) is a small demo of the library in action.
+[Here](http://elbywan.github.io/quadtree-lib/demo/) is a small demo of the
+library in action.
 
 ## Setup
 
@@ -32,7 +38,8 @@ Quadtree = require("quadtree-lib")
 
 ### Using gulp
 
-Clone the git repository, run `git clone https://github.com/elbywan/quadtree-lib`  
+Clone the git repository, run
+`git clone https://github.com/elbywan/quadtree-lib`  
 
 -   To build the library, run `gulp`.
 -   To run the performance tests, run `gulp perf`.
@@ -53,22 +60,26 @@ var quadtree = new Quadtree({
 
 `width` and `height` are mandatory attributes.
 
-`maxElements` is the maximum number of elements contained in a leaf before it splits into child trees. **defaults to 1.**
+`maxElements` (default 1) is the maximum number of elements contained in a leaf before it
+splits into child trees.
 
 ### Adding elements
 
 Elements must be objects, with coordinates set.
 
-Optionally, you can pass a boolean argument which, if set to True, will remove/push the object into the quadtree each time its coordinates or dimensions are set `(ex: item.x = ... or item.width = ...)`.
+Optionally, you can pass a boolean argument which, if set to True, will
+remove/push the object into the quadtree each time its coordinates or dimensions
+are set *(ex: item.x = ... or item.width = ...)*.
 
-*Without this flag, x / y / width / height properties should **not** be changed  after insertion.*
+*Without this flag, x / y / width / height properties should* **not** *be
+changed  after insertion.*
 
 ```javascript
 quadtree.push({
     x: 10,      //Mandatory
     y: 10,      //Mandatory
-    width: 1,   //Optional, defaults to 0
-    height: 2   //Optional, defaults to 0
+    width: 1,   //Optional, defaults to 1
+    height: 2   //Optional, defaults to 1
 }, true) //Optional, defaults to false
 ```
 
@@ -82,13 +93,16 @@ quadtree.remove(item)
 
 ### Filtering the tree
 
-Filters the quadtree and returns a **clone** containing only the elements determined by a predicate function.
+Filters the quadtree and returns a **clone** containing only the elements
+determined by a predicate function.
 
 ```javascript
 var filtered = quadtree.filter(function(element){
     return element.x > 50
 }
 ```
+
+*Opposite: quadtree.reject*
 
 ### Retrieve colliding elements
 
@@ -127,7 +141,7 @@ var match = quadtree.where({
 })
 ```
 
-_Alias : quadtree.get_
+*Alias : quadtree.get*
 
 ### Retrieve by predicate
 

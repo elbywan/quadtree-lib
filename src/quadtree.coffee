@@ -311,6 +311,11 @@ class Quadtree
 
         deepclone @
 
+    # Opposite of filter
+    reject: (predicate) ->
+        @filter (i) ->
+            not predicate?(i)
+
     # Visits each tree & subtree contained in the `Quadtree` object.
     # For each node, performs the `action` function, inside which `this`is binded to the node tree object.
     visit: (action) ->

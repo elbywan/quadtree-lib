@@ -410,6 +410,12 @@ Quadtree = (function() {
     return deepclone(this);
   };
 
+  Quadtree.prototype.reject = function(predicate) {
+    return this.filter(function(i) {
+      return !(typeof predicate === "function" ? predicate(i) : void 0);
+    });
+  };
+
   Quadtree.prototype.visit = function(action) {
     var child, fifo, that;
     fifo = [this];

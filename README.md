@@ -99,7 +99,7 @@ determined by a predicate function.
 ```javascript
 var filtered = quadtree.filter(function(element){
     return element.x > 50
-}
+})
 ```
 
 *Opposite: quadtree.reject*

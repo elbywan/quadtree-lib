@@ -245,3 +245,17 @@ describe 'quadtree', () ->
         assert.equal quadtree.size, 3
         assert.equal quadtree.children["NW"].tree.size, 2
         assert.equal quadtree.oversized.indexOf(element0), 0
+
+    it 'should get an element by any property', () ->
+        quadtree  = new Quadtree width: 100, height: 100
+        quadtree.push e0 = x: 0, y: 0, animal: 'rabbit'
+        quadtree.push e1 = x: 25, y: 50, animal: 'dog'
+        quadtree.push e1 = x: 16, y: 18, animal: 'rabbit'
+
+        whereResult1 = quadtree.where(animal: 'horse')
+        whereResult2 = quadtree.where(animal: 'rabbit')
+        whereResult3 = quadtree.where(animal: 'dog')
+
+        assert.equal(whereResult1.length, 0)
+        assert.equal(whereResult2.length, 2)
+        assert.equal(whereResult3.length, 1)

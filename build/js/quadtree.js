@@ -271,6 +271,18 @@ Quadtree = (function() {
 
   Quadtree.prototype.where = function(params) {
     var check, elt, fifo, items, j, k, key, len, len1, ref, ref1, relatedChild, top;
+    if (typeof params === "object" && (params.x == null) && (params.y == null)) {
+      return this.find(function(elt) {
+        var check, key;
+        check = true;
+        for (key in params) {
+          if (params[key] !== elt[key]) {
+            check = false;
+          }
+        }
+        return check;
+      });
+    }
     validateElement(params);
     items = [];
     fifo = [this];

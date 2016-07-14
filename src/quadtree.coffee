@@ -238,6 +238,14 @@ class Quadtree
         @where params
     # Returns an array of elements that match the parameter properties.
     where: (params) ->
+        # Naïve parsing (missing coordinates)
+        if typeof params is "object" and not params.x? and not params.y?
+            return @find (elt) ->
+                check = true
+                for key of params when params[key] isnt elt[key] then check = false
+                check
+
+        # Optimised parsing
         validateElement params
 
         items = []

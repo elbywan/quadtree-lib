@@ -20,11 +20,11 @@ library in action.
 
 ## Setup
 
-### Using npm
+### Using npm / yarn
 
 From the command line :
 
-`npm install quadtree-lib`
+`npm install quadtree-lib` or `yarn add quadtree-lib`
 
 Then in your javascript file :
 

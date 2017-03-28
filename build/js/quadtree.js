@@ -22,10 +22,10 @@ Quadtree = (function() {
     this.oversized = [];
     this.size = 0;
     if (this.x < 0 || this.y < 0 || this.width < 1 || this.height < 1) {
-      throw new Error("Dimensions must be positive integers.");
+      throw new Error("Dimensions and coordinates must be positive integers.");
     }
     if (this.maxElements < 1) {
-      throw new Error("The maximum of elements by leaf must be a positive integer.");
+      throw new Error("The maximum number of elements before a split must be a positive integer.");
     }
     that = this;
     this.children = {
@@ -103,7 +103,7 @@ Quadtree = (function() {
       throw new Error("Object must contain x or y positions as arguments, and they must be positive integers.");
     }
     if ((element != null ? element.width : void 0) < 0 || (element != null ? element.height : void 0) < 0) {
-      throw new Error("Width and height arguments must be positive integers.");
+      throw new Error("Width and height must be positive integers.");
     }
   };
 
@@ -153,10 +153,10 @@ Quadtree = (function() {
     return writeAccessors("height");
   };
 
-  Quadtree.prototype.push = function(item, enableObserve) {
+  Quadtree.prototype.push = function(item, doObserve) {
     var c, element, fifo, j, len, ref, relatedChild, top, tree;
     validateElement(item);
-    if (enableObserve) {
+    if (doObserve) {
       observe(item, this);
     }
     fifo = [
@@ -265,25 +265,25 @@ Quadtree = (function() {
     return items;
   };
 
-  Quadtree.prototype.get = function(params) {
-    return this.where(params);
+  Quadtree.prototype.get = function(query) {
+    return this.where(query);
   };
 
-  Quadtree.prototype.where = function(params) {
+  Quadtree.prototype.where = function(query) {
     var check, elt, fifo, items, j, k, key, len, len1, ref, ref1, relatedChild, top;
-    if (typeof params === "object" && (params.x == null) && (params.y == null)) {
+    if (typeof query === "object" && (query.x == null) && (query.y == null)) {
       return this.find(function(elt) {
         var check, key;
         check = true;
-        for (key in params) {
-          if (params[key] !== elt[key]) {
+        for (key in query) {
+          if (query[key] !== elt[key]) {
             check = false;
           }
         }
         return check;
       });
     }
-    validateElement(params);
+    validateElement(query);
     items = [];
     fifo = [this];
     while (fifo.length > 0) {
@@ -292,8 +292,8 @@ Quadtree = (function() {
       for (j = 0, len = ref.length; j < len; j++) {
         elt = ref[j];
         check = true;
-        for (key in params) {
-          if (params[key] !== elt[key]) {
+        for (key in query) {
+          if (query[key] !== elt[key]) {
             check = false;
           }
         }
@@ -305,8 +305,8 @@ Quadtree = (function() {
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         elt = ref1[k];
         check = true;
-        for (key in params) {
-          if (params[key] !== elt[key]) {
+        for (key in query) {
+          if (query[key] !== elt[key]) {
             check = false;
           }
         }
@@ -314,7 +314,7 @@ Quadtree = (function() {
           items.push(elt);
         }
       }
-      relatedChild = top.children[calculateDirection(params, top)];
+      relatedChild = top.children[calculateDirection(query, top)];
       if (relatedChild.tree != null) {
         fifo.push(relatedChild.tree);
       }

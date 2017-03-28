@@ -10,11 +10,12 @@
 class Quadtree
     # ### Constructor
 
-    # A quadtree is built with 5 main parameters :
-    # - x & y coordinates which are always (0,0) for the root tree.
+    # A quadtree constructor has 5 parameters :
+    # - x & y coordinates which are always (0, 0) for the root tree.
     # - its dimensions (width & length), mandatory.
-    # - the maximum number of elements before it 'splits' into subtrees. (defaults to 1)
+    # - the maximum number of elements before the leaf 'splits' into subtrees. (defaults to 1)
     constructor: ({@x, @y, @width, @height, @maxElements}) ->
+
         # An error is thrown when the width & length are not passed as constructor arguments.
         throw new Error "Missing quadtree dimensions." if not @width? or not @height?
         @x ?= 0
@@ -24,13 +25,13 @@ class Quadtree
         @oversized = []
         @size = 0
 
-        # Dimension & coordinates are checked, and en error is thrown in case of bad input.
-        throw new Error "Dimensions must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
-        throw new Error "The maximum of elements by leaf must be a positive integer." if @maxElements < 1
+        # Dimension & coordinates are checked, an error is thrown in case of bad input.
+        throw new Error "Dimensions and coordinates must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
+        throw new Error "The maximum number of elements before a split must be a positive integer." if @maxElements < 1
 
         that = @
 
-        # The subtrees list, by position. Contains the subtree, a creation method with proper coordinates & dimensions and a getter.
+        # The subtrees list, by position.
         @children = {
             # Northwest tree.
             "NW":
@@ -77,26 +78,26 @@ class Quadtree
                     })
                 tree: null
         }
-        # Adding a getter which also creates the tree if needed.
+        # Adding a getter which lazily creates the tree.
         for child of @children
             @children[child].get = () ->
                 if @tree? then @tree else @tree = @create(); @tree
 
     # ### Internal methods & vars
 
-    # Retrieves the center coordinates of an element.
+    # Retrieves the center coordinates of a rectangle.
     getCenter = (item) ->
         x: Math.floor((item.width  ? 1) / 2) + item.x
         y: Math.floor((item.height ? 1) / 2) + item.y
 
-    # Validates an element of the quadtree, by checking its properties for x & y coordinates, and proper value.
+    # Validates a potential element of the tree.
     validateElement = (element) ->
         if not typeof element is "object" or not element.x? or not element.y? or element.x < 0 or element.y < 0
             throw new Error "Object must contain x or y positions as arguments, and they must be positive integers."
         if element?.width < 0 or element?.height < 0
-            throw new Error "Width and height arguments must be positive integers."
+            throw new Error "Width and height must be positive integers."
 
-    # Calculates the direction of the subtree which an element belongs to.
+    # Determines the subtree which an element belongs to.
     calculateDirection = (element, tree) ->
         element
         quadCenter = getCenter tree
@@ -108,14 +109,15 @@ class Quadtree
             if element.y < quadCenter.y then "NE"
             else "SE"
 
-    # Determines if an element is oversized. An oversized element is an element 'too big' to fit into subtrees.
+    # Determines if an element is oversized.
+    # An oversized element is an element 'too big' to fit into the tree.
     isOversized = (element, tree) ->
         element.x < tree.x or
         element.x + (element.width ? 0) >= tree.x + tree.width or
         element.y < tree.y or
         element.y + (element.height ? 0) >= tree.y + tree.height
 
-    # Add getters and setters for coordinates and dimensions properties in order to automatically reorganize the elements into the quadtree on change.
+    # Add getters and setters for coordinates and dimensions properties in order to automatically reorganize the elements on change.
     observe = (item, tree) ->
         writeAccessors = (propName) ->
             item["_#{propName}"] = item[propName]
@@ -137,9 +139,9 @@ class Quadtree
 
     # Add an element to the quadtree.
     # Elements can be observed to reorganize them into the quadtree automatically when their coordinates or dimensions are manually changed (for ex. obj.x = ...).
-    push: (item, enableObserve) ->
+    push: (item, doObserve) ->
         validateElement item
-        observe item, @ if enableObserve
+        observe item, @ if doObserve
 
         fifo = [tree: @, element: item]
 
@@ -193,11 +195,11 @@ class Quadtree
         else
             false
 
-    # Returns an array of elements which collides with `item` provided`.
+    # Returns an array of elements which collides with the `item` argument.
+    # `item` being an object having x, y, width & height properties.
 
-    # `item` is an object having x, y, width & height properties.
-
-    # The default collision function is a basic bounding box algorithm. You can change it by providing a function as a second argument.
+    # The default collision function is a basic bounding box algorithm.
+    # You can change it by providing a function as a second argument.
     #```javascript
     #colliding({x: 10, y: 20}, function(element1, element2){
     #    return //Predicate
@@ -214,7 +216,7 @@ class Quadtree
                     elt1.y + (elt1.height ? 0) < elt2.y)
 
         items = []
-        fifo = [@]
+        fifo  = [@]
 
         while fifo.length > 0
             top = fifo.splice(0, 1)[0]
@@ -234,19 +236,19 @@ class Quadtree
         items
 
     # Alias of `where`.
-    get: (params) ->
-        @where params
-    # Returns an array of elements that match the parameter properties.
-    where: (params) ->
+    get: (query) ->
+        @where query
+    # Returns an array of elements that match the `query` argument.
+    where: (query) ->
         # Naïve parsing (missing coordinates)
-        if typeof params is "object" and not params.x? and not params.y?
+        if typeof query is "object" and not query.x? and not query.y?
             return @find (elt) ->
                 check = true
-                for key of params when params[key] isnt elt[key] then check = false
+                for key of query when query[key] isnt elt[key] then check = false
                 check
 
         # Optimised parsing
-        validateElement params
+        validateElement query
 
         items = []
         fifo = [@]
@@ -256,21 +258,21 @@ class Quadtree
 
             for elt in top.oversized
                 check = true
-                for key of params when params[key] isnt elt[key] then check = false
+                for key of query when query[key] isnt elt[key] then check = false
                 items.push elt if check
             for elt in top.contents
                 check = true
-                for key of params when params[key] isnt elt[key] then check = false
+                for key of query when query[key] isnt elt[key] then check = false
                 items.push elt if check
 
-            relatedChild = top.children[calculateDirection params, top]
+            relatedChild = top.children[calculateDirection query, top]
 
             if relatedChild.tree?
                 fifo.push relatedChild.tree
 
         items
 
-    # For each element, performs `action` where `action` is a function.
+    # For each element of the quadtree, performs the `action` function.
     #```javascript
     #quad.each(function(item){ console.log(item) })
     #```
@@ -325,7 +327,7 @@ class Quadtree
             not predicate?(i)
 
     # Visits each tree & subtree contained in the `Quadtree` object.
-    # For each node, performs the `action` function, inside which `this`is binded to the node tree object.
+    # For each node, performs the `action` function, inside which `this` is bound to the node tree object.
     visit: (action) ->
         fifo = [@]
 

@@ -208,12 +208,13 @@ class Quadtree
     colliding: (item, collisionFunction) ->
         validateElement item
 
-        if not collisionFunction?
-            collisionFunction = (elt1, elt2) ->
-                not(elt1.x > elt2.x + (elt2.width ? 0)      or
-                    elt1.x + (elt1.width ? 0) < elt2.x      or
-                    elt1.y > elt2.y + (elt2.height ? 0)     or
-                    elt1.y + (elt1.height ? 0) < elt2.y)
+        boundingBoxCollision = (elt1, elt2) ->
+            not(elt1.x > elt2.x + (elt2.width ? 0)      or
+                elt1.x + (elt1.width ? 0) < elt2.x      or
+                elt1.y > elt2.y + (elt2.height ? 0)     or
+                elt1.y + (elt1.height ? 0) < elt2.y)
+
+        collisionFunction ?= boundingBoxCollision
 
         items = []
         fifo  = [@]
@@ -227,8 +228,9 @@ class Quadtree
             relatedChild = top.children[calculateDirection item, top]
 
             if isOversized item, relatedChild.create()
-                for child of top.children when top.children[child].tree?
-                    fifo.push top.children[child].tree
+                for child of top.children
+                    if top.children[child].tree? and boundingBoxCollision(top.children[child].tree, item)
+                        fifo.push top.children[child].tree
 
             else if relatedChild.tree?
                 fifo.push relatedChild.tree

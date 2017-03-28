@@ -47,17 +47,18 @@ describe 'quadtree', () ->
 
     it 'should detect colliding elements', () ->
         quadtree = new Quadtree width: 100, height: 100
-        quadtree.push element0 = x: 75, y: 80, width: 10, height: 10
-        quadtree.push element1 = x: 80, y: 85, width: 15, height: 10
-        quadtree.push element2 = x: 10, y: 15, width: 5, height: 5
-        quadtree.push element3 = x: 12, y: 20, width: 5, height: 5
-        quadtree.push element4 = x: 0, y: 0
-        quadtree.push element5 = x: 49, y: 49, width: 1, height :1
-        quadtree.push element6 = x: 50, y: 49, width: 1, height :1
-        quadtree.push element7 = x: 49, y: 50, width: 1, height :1
-        quadtree.push element8 = x: 50, y: 50, width: 1, height :1
-        quadtree.push element9 = x: 99, y: 99
-        quadtree.push element10 = x: 99, y: 99
+        quadtree.pushAll [
+            element0 =  x: 75, y: 80, width: 10, height: 10,
+            element1 =  x: 80, y: 85, width: 15, height: 10,
+            element2 =  x: 10, y: 15, width: 5,  height: 5,
+            element3 =  x: 12, y: 20, width: 5,  height: 5,
+            element4 =  x: 0,  y: 0,
+            element5 =  x: 49, y: 49, width: 1, height : 1,
+            element6 =  x: 50, y: 49, width: 1, height : 1,
+            element7 =  x: 49, y: 50, width: 1, height : 1,
+            element8 =  x: 50, y: 50, width: 1, height : 1,
+            element9 =  x: 99, y: 99,
+            element10 = x: 99, y: 99]
 
         assert.equal quadtree.size,11
         assert.equal (quadtree.colliding element0)[0], element1
@@ -87,8 +88,7 @@ describe 'quadtree', () ->
             element3 = x: 12, y: 20, width: 5, height: 5,
             element4 = x: 49, y: 49 ]
 
-        for element in elementArray
-            quadtree.push element
+        quadtree.pushAll elementArray
 
         assert.equal quadtree.size, 5
 
@@ -97,12 +97,13 @@ describe 'quadtree', () ->
 
     it 'should get an element provided its coordinates and properties', () ->
         quadtree = new Quadtree width: 10, height: 10
-        quadtree.push e0 = x: 1, y: 0
-        quadtree.push e1 = x: 0, y: 1
-        quadtree.push e2 = x: 2, y: 1
-        quadtree.push e3 = x: 4, y: 5
-        quadtree.push e3bis = x: e3.x, y: e3.y, content: 'toto'
-        quadtree.push big = x: 0, y: 0, width: 10, height: 10
+        quadtree.pushAll [
+             e0 = x: 1, y: 0,
+             e1 = x: 0, y: 1,
+             e2 = x: 2, y: 1,
+             e3 = x: 4, y: 5,
+             e3bis = x: e3.x, y: e3.y, content: 'toto',
+             big = x: 0, y: 0, width: 10, height: 10 ]
 
         assert.equal quadtree.get(x: e0.x, y: e0.y).length, 1
         assert.equal quadtree.get(x: e0.x, y: e0.y)[0], e0
@@ -152,8 +153,7 @@ describe 'quadtree', () ->
             element3 = x: 12, y: 20, width: 5, height: 5,
             element4 = x: 49, y: 49 ]
 
-        for element in elementArray
-            quadtree.push element
+        quadtree.pushAll elementArray
 
         copycatFilter = quadtree.filter (element) ->
             element.x > 50
@@ -183,8 +183,7 @@ describe 'quadtree', () ->
             element3 = x: 12, y: 20, width: 5, height: 5,
             element4 = x: 49, y: 49 ]
 
-        for element in elementArray
-            quadtree.push element
+        quadtree.pushAll elementArray
 
         i = 0
         quadtree.visit () ->
@@ -201,9 +200,8 @@ describe 'quadtree', () ->
             element1 = x: 10, y: 10,
             element2 = x: 55, y: 55 ]
 
-        for element in elementArray
-            quadtree.push element
-            quadtree2.push element
+        quadtree.pushAll elementArray
+        quadtree2.pushAll elementArray
 
         assert.equal quadtree.children["NW"].tree.contents.length, 0
         assert.equal quadtree2.children["NW"].tree.contents.length, 2

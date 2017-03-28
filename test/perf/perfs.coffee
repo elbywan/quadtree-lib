@@ -15,12 +15,14 @@ describe 'quadtree', () ->
         console.log "[Perfs] Starting for #{times} elements with size #{size}, #{startingTime} [buffer: #{buffer}]"
         console.log "[Perfs] Adding random elements ..."
 
+        randomElements = []
         for index in [1..times-1]
-            quadtree.push
+            randomElements.push
                 x: randomNb 0, size
                 y: randomNb 0, size
                 width: randomNb 1, size/10
                 height: randomNb 1, size/10
+        quadtree.pushAll(randomElements)
 
         randomElt = {
             x: randomNb 0, size

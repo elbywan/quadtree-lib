@@ -97,9 +97,8 @@ class Quadtree
         if element?.width < 0 or element?.height < 0
             throw new Error "Width and height must be positive integers."
 
-    # Determines the subtree which an element belongs to.
+    # Determines which subtree an element belongs to.
     calculateDirection = (element, tree) ->
-        element
         quadCenter = getCenter tree
 
         if element.x < quadCenter.x
@@ -138,35 +137,51 @@ class Quadtree
     # ### Exposed methods
 
     # Add an element to the quadtree.
-    # Elements can be observed to reorganize them into the quadtree automatically when their coordinates or dimensions are manually changed (for ex. obj.x = ...).
+    # Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = ...).
     push: (item, doObserve) ->
-        validateElement item
-        observe item, @ if doObserve
+        @pushAll([item], doObserve)
 
-        fifo = [tree: @, element: item]
+    # Push an array of elements.
+    pushAll : (items, doObserve) ->
+        for item in items
+            validateElement item
+            observe item, @ if doObserve
+
+        fifo = [tree: @, elements: items]
 
         while fifo.length > 0
-            top = fifo.splice(0, 1)[0]
+            top = fifo.shift()
             tree = top.tree
-            element = top.element
+            elements = top.elements
 
-            tree.size++
+            fifoCandidates = "NW": null, "NE": null, "SW": null, "SE": null
 
-            relatedChild = tree.children[calculateDirection element, tree]
+            for element in elements
+                tree.size++
 
-            if tree.width is 1 or tree.height is 1 or isOversized element, relatedChild.create()
-                tree.oversized.push element
+                direction = calculateDirection element, tree
+                relatedChild = tree.children[direction]
 
-            else if tree.size <= tree.maxElements
-                tree.contents.push element
+                if tree.width is 1 or tree.height is 1 or isOversized element, relatedChild.create()
+                    tree.oversized.push element
 
-            else
-                fifo.push tree: relatedChild.get(), element: element
+                else if tree.size <= tree.maxElements
+                    tree.contents.push element
 
-                for c in tree.contents
-                    fifo.push tree: tree.children[calculateDirection c, tree].get(), element: c
+                else
+                    fifoCandidates[direction] ?= tree: relatedChild.get(), elements: []
+                    fifoCandidates[direction].elements.push(element)
 
-                tree.contents = []
+                    for content in tree.contents
+                        contentDir = calculateDirection content, tree
+                        fifoCandidates[contentDir] ?= tree: tree.children[contentDir].get(), elements: []
+                        fifoCandidates[contentDir].elements.push(content)
+
+                    tree.contents = []
+
+            for direction, candidate of fifoCandidates
+                if candidate? then fifo.push candidate
+
         @
 
     # Removes an element from the quadtree.
@@ -220,7 +235,7 @@ class Quadtree
         fifo  = [@]
 
         while fifo.length > 0
-            top = fifo.splice(0, 1)[0]
+            top = fifo.shift()
 
             for elt in top.oversized when elt isnt item and collisionFunction item, elt then items.push elt
             for elt in top.contents  when elt isnt item and collisionFunction item, elt then items.push elt
@@ -256,7 +271,7 @@ class Quadtree
         fifo = [@]
 
         while fifo.length > 0
-            top = fifo.splice(0, 1)[0]
+            top = fifo.shift()
 
             for elt in top.oversized
                 check = true
@@ -282,7 +297,7 @@ class Quadtree
         fifo = [@]
 
         while fifo.length > 0
-            top = fifo.splice(0, 1)[0]
+            top = fifo.shift()
             for i in top.oversized then action?(i)
             for i in top.contents then action?(i)
 
@@ -296,7 +311,7 @@ class Quadtree
         items = []
 
         while fifo.length > 0
-            top = fifo.splice(0, 1)[0]
+            top = fifo.shift()
             for i in top.oversized when predicate?(i) then items.push i
             for i in top.contents when predicate?(i) then items.push i
 
@@ -334,7 +349,7 @@ class Quadtree
         fifo = [@]
 
         while fifo.length > 0
-            that = fifo.splice(0, 1)[0]
+            that = fifo.shift()
             action.bind(that)()
 
             for child of that.children when that.children[child].tree?

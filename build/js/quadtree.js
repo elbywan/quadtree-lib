@@ -108,7 +108,6 @@ Quadtree = (function() {
   };
 
   calculateDirection = function(element, tree) {
-    element;
     var quadCenter;
     quadCenter = getCenter(tree);
     if (element.x < quadCenter.x) {
@@ -154,41 +153,71 @@ Quadtree = (function() {
   };
 
   Quadtree.prototype.push = function(item, doObserve) {
-    var c, element, fifo, j, len, ref, relatedChild, top, tree;
-    validateElement(item);
-    if (doObserve) {
-      observe(item, this);
+    return this.pushAll([item], doObserve);
+  };
+
+  Quadtree.prototype.pushAll = function(items, doObserve) {
+    var candidate, content, contentDir, direction, element, elements, fifo, fifoCandidates, item, j, k, l, len, len1, len2, ref, relatedChild, top, tree;
+    for (j = 0, len = items.length; j < len; j++) {
+      item = items[j];
+      validateElement(item);
+      if (doObserve) {
+        observe(item, this);
+      }
     }
     fifo = [
       {
         tree: this,
-        element: item
+        elements: items
       }
     ];
     while (fifo.length > 0) {
-      top = fifo.splice(0, 1)[0];
+      top = fifo.shift();
       tree = top.tree;
-      element = top.element;
-      tree.size++;
-      relatedChild = tree.children[calculateDirection(element, tree)];
-      if (tree.width === 1 || tree.height === 1 || isOversized(element, relatedChild.create())) {
-        tree.oversized.push(element);
-      } else if (tree.size <= tree.maxElements) {
-        tree.contents.push(element);
-      } else {
-        fifo.push({
-          tree: relatedChild.get(),
-          element: element
-        });
-        ref = tree.contents;
-        for (j = 0, len = ref.length; j < len; j++) {
-          c = ref[j];
-          fifo.push({
-            tree: tree.children[calculateDirection(c, tree)].get(),
-            element: c
-          });
+      elements = top.elements;
+      fifoCandidates = {
+        "NW": null,
+        "NE": null,
+        "SW": null,
+        "SE": null
+      };
+      for (k = 0, len1 = elements.length; k < len1; k++) {
+        element = elements[k];
+        tree.size++;
+        direction = calculateDirection(element, tree);
+        relatedChild = tree.children[direction];
+        if (tree.width === 1 || tree.height === 1 || isOversized(element, relatedChild.create())) {
+          tree.oversized.push(element);
+        } else if (tree.size <= tree.maxElements) {
+          tree.contents.push(element);
+        } else {
+          if (fifoCandidates[direction] == null) {
+            fifoCandidates[direction] = {
+              tree: relatedChild.get(),
+              elements: []
+            };
+          }
+          fifoCandidates[direction].elements.push(element);
+          ref = tree.contents;
+          for (l = 0, len2 = ref.length; l < len2; l++) {
+            content = ref[l];
+            contentDir = calculateDirection(content, tree);
+            if (fifoCandidates[contentDir] == null) {
+              fifoCandidates[contentDir] = {
+                tree: tree.children[contentDir].get(),
+                elements: []
+              };
+            }
+            fifoCandidates[contentDir].elements.push(content);
+          }
+          tree.contents = [];
         }
-        tree.contents = [];
+      }
+      for (direction in fifoCandidates) {
+        candidate = fifoCandidates[direction];
+        if (candidate != null) {
+          fifo.push(candidate);
+        }
       }
     }
     return this;
@@ -225,18 +254,19 @@ Quadtree = (function() {
   };
 
   Quadtree.prototype.colliding = function(item, collisionFunction) {
-    var child, elt, fifo, items, j, k, len, len1, ref, ref1, relatedChild, top;
+    var boundingBoxCollision, child, elt, fifo, items, j, k, len, len1, ref, ref1, relatedChild, top;
     validateElement(item);
+    boundingBoxCollision = function(elt1, elt2) {
+      var ref, ref1, ref2, ref3;
+      return !(elt1.x > elt2.x + ((ref = elt2.width) != null ? ref : 0) || elt1.x + ((ref1 = elt1.width) != null ? ref1 : 0) < elt2.x || elt1.y > elt2.y + ((ref2 = elt2.height) != null ? ref2 : 0) || elt1.y + ((ref3 = elt1.height) != null ? ref3 : 0) < elt2.y);
+    };
     if (collisionFunction == null) {
-      collisionFunction = function(elt1, elt2) {
-        var ref, ref1, ref2, ref3;
-        return !(elt1.x > elt2.x + ((ref = elt2.width) != null ? ref : 0) || elt1.x + ((ref1 = elt1.width) != null ? ref1 : 0) < elt2.x || elt1.y > elt2.y + ((ref2 = elt2.height) != null ? ref2 : 0) || elt1.y + ((ref3 = elt1.height) != null ? ref3 : 0) < elt2.y);
-      };
+      collisionFunction = boundingBoxCollision;
     }
     items = [];
     fifo = [this];
     while (fifo.length > 0) {
-      top = fifo.splice(0, 1)[0];
+      top = fifo.shift();
       ref = top.oversized;
       for (j = 0, len = ref.length; j < len; j++) {
         elt = ref[j];
@@ -254,7 +284,7 @@ Quadtree = (function() {
       relatedChild = top.children[calculateDirection(item, top)];
       if (isOversized(item, relatedChild.create())) {
         for (child in top.children) {
-          if (top.children[child].tree != null) {
+          if ((top.children[child].tree != null) && boundingBoxCollision(top.children[child].tree, item)) {
             fifo.push(top.children[child].tree);
           }
         }
@@ -287,7 +317,7 @@ Quadtree = (function() {
     items = [];
     fifo = [this];
     while (fifo.length > 0) {
-      top = fifo.splice(0, 1)[0];
+      top = fifo.shift();
       ref = top.oversized;
       for (j = 0, len = ref.length; j < len; j++) {
         elt = ref[j];
@@ -326,7 +356,7 @@ Quadtree = (function() {
     var child, fifo, i, j, k, len, len1, ref, ref1, top;
     fifo = [this];
     while (fifo.length > 0) {
-      top = fifo.splice(0, 1)[0];
+      top = fifo.shift();
       ref = top.oversized;
       for (j = 0, len = ref.length; j < len; j++) {
         i = ref[j];
@@ -355,7 +385,7 @@ Quadtree = (function() {
     fifo = [this];
     items = [];
     while (fifo.length > 0) {
-      top = fifo.splice(0, 1)[0];
+      top = fifo.shift();
       ref = top.oversized;
       for (j = 0, len = ref.length; j < len; j++) {
         i = ref[j];
@@ -432,7 +462,7 @@ Quadtree = (function() {
     var child, fifo, that;
     fifo = [this];
     while (fifo.length > 0) {
-      that = fifo.splice(0, 1)[0];
+      that = fifo.shift();
       action.bind(that)();
       for (child in that.children) {
         if (that.children[child].tree != null) {

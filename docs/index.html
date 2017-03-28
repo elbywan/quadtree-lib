@@ -184,11 +184,10 @@ collisions over 2d elements and more.</p>
         
       
         
-        <p>Determines the subtree which an element belongs to.</p>
+        <p>Determines which subtree an element belongs to.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">calculateDirection</span> = <span class="hljs-params">(element, tree)</span> -&gt;</span>
-        element
         quadCenter = getCenter tree
 
         <span class="hljs-keyword">if</span> element.x &lt; quadCenter.x
@@ -240,37 +239,57 @@ An oversized element is an element ‘too big’ to fit into the tree.</p>
       
         
         <p>Add an element to the quadtree.
-Elements can be observed to reorganize them into the quadtree automatically when their coordinates or dimensions are manually changed (for ex. obj.x = …).</p>
+Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = …).</p>
 
         
           <div class='highlight'><pre>    push: <span class="hljs-function"><span class="hljs-params">(item, doObserve)</span> -&gt;</span>
-        validateElement item
-        observe item, @ <span class="hljs-keyword">if</span> doObserve
+        @pushAll([item], doObserve)</pre></div>
+        
+      
+        
+        <p>Push an array of elements.</p>
 
-        fifo = [tree: @, element: item]
+        
+          <div class='highlight'><pre>    pushAll : <span class="hljs-function"><span class="hljs-params">(items, doObserve)</span> -&gt;</span>
+        <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> items
+            validateElement item
+            observe item, @ <span class="hljs-keyword">if</span> doObserve
+
+        fifo = [tree: @, elements: items]
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            top = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            top = fifo.shift()
             tree = top.tree
-            element = top.element
+            elements = top.elements
 
-            tree.size++
+            fifoCandidates = <span class="hljs-string">"NW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"NE"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SE"</span>: <span class="hljs-literal">null</span>
 
-            relatedChild = tree.children[calculateDirection element, tree]
+            <span class="hljs-keyword">for</span> element <span class="hljs-keyword">in</span> elements
+                tree.size++
 
-            <span class="hljs-keyword">if</span> tree.width <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> tree.height <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> isOversized element, relatedChild.create()
-                tree.oversized.push element
+                direction = calculateDirection element, tree
+                relatedChild = tree.children[direction]
 
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> tree.size &lt;= tree.maxElements
-                tree.contents.push element
+                <span class="hljs-keyword">if</span> tree.width <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> tree.height <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> isOversized element, relatedChild.create()
+                    tree.oversized.push element
 
-            <span class="hljs-keyword">else</span>
-                fifo.push tree: relatedChild.get(), element: element
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> tree.size &lt;= tree.maxElements
+                    tree.contents.push element
 
-                <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> tree.contents
-                    fifo.push tree: tree.children[calculateDirection c, tree].get(), element: c
+                <span class="hljs-keyword">else</span>
+                    fifoCandidates[direction] ?= tree: relatedChild.get(), elements: []
+                    fifoCandidates[direction].elements.push(element)
 
-                tree.contents = []
+                    <span class="hljs-keyword">for</span> content <span class="hljs-keyword">in</span> tree.contents
+                        contentDir = calculateDirection content, tree
+                        fifoCandidates[contentDir] ?= tree: tree.children[contentDir].get(), elements: []
+                        fifoCandidates[contentDir].elements.push(content)
+
+                    tree.contents = []
+
+            <span class="hljs-keyword">for</span> direction, candidate <span class="hljs-keyword">of</span> fifoCandidates
+                <span class="hljs-keyword">if</span> candidate? <span class="hljs-keyword">then</span> fifo.push candidate
+
         @</pre></div>
         
       
@@ -321,19 +340,20 @@ You can change it by providing a function as a second argument.</p>
         
           <div class='highlight'><pre>    colliding: <span class="hljs-function"><span class="hljs-params">(item, collisionFunction)</span> -&gt;</span>
         validateElement item
+<span class="hljs-function">
+        <span class="hljs-title">boundingBoxCollision</span> = <span class="hljs-params">(elt1, elt2)</span> -&gt;</span>
+            <span class="hljs-keyword">not</span>(elt1.x &gt; elt2.x + (elt2.width ? <span class="hljs-number">0</span>)      <span class="hljs-keyword">or</span>
+                elt1.x + (elt1.width ? <span class="hljs-number">0</span>) &lt; elt2.x      <span class="hljs-keyword">or</span>
+                elt1.y &gt; elt2.y + (elt2.height ? <span class="hljs-number">0</span>)     <span class="hljs-keyword">or</span>
+                elt1.y + (elt1.height ? <span class="hljs-number">0</span>) &lt; elt2.y)
 
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> collisionFunction?
-<span class="hljs-function">            <span class="hljs-title">collisionFunction</span> = <span class="hljs-params">(elt1, elt2)</span> -&gt;</span>
-                <span class="hljs-keyword">not</span>(elt1.x &gt; elt2.x + (elt2.width ? <span class="hljs-number">0</span>)      <span class="hljs-keyword">or</span>
-                    elt1.x + (elt1.width ? <span class="hljs-number">0</span>) &lt; elt2.x      <span class="hljs-keyword">or</span>
-                    elt1.y &gt; elt2.y + (elt2.height ? <span class="hljs-number">0</span>)     <span class="hljs-keyword">or</span>
-                    elt1.y + (elt1.height ? <span class="hljs-number">0</span>) &lt; elt2.y)
+        collisionFunction ?= boundingBoxCollision
 
         items = []
         fifo  = [@]
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            top = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            top = fifo.shift()
 
             <span class="hljs-keyword">for</span> elt <span class="hljs-keyword">in</span> top.oversized <span class="hljs-keyword">when</span> elt <span class="hljs-keyword">isnt</span> item <span class="hljs-keyword">and</span> collisionFunction item, elt <span class="hljs-keyword">then</span> items.push elt
             <span class="hljs-keyword">for</span> elt <span class="hljs-keyword">in</span> top.contents  <span class="hljs-keyword">when</span> elt <span class="hljs-keyword">isnt</span> item <span class="hljs-keyword">and</span> collisionFunction item, elt <span class="hljs-keyword">then</span> items.push elt
@@ -341,8 +361,9 @@ You can change it by providing a function as a second argument.</p>
             relatedChild = top.children[calculateDirection item, top]
 
             <span class="hljs-keyword">if</span> isOversized item, relatedChild.create()
-                <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> top.children <span class="hljs-keyword">when</span> top.children[child].tree?
-                    fifo.push top.children[child].tree
+                <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> top.children
+                    <span class="hljs-keyword">if</span> top.children[child].tree? <span class="hljs-keyword">and</span> boundingBoxCollision(top.children[child].tree, item)
+                        fifo.push top.children[child].tree
 
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> relatedChild.tree?
                 fifo.push relatedChild.tree
@@ -386,7 +407,7 @@ You can change it by providing a function as a second argument.</p>
         fifo = [@]
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            top = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            top = fifo.shift()
 
             <span class="hljs-keyword">for</span> elt <span class="hljs-keyword">in</span> top.oversized
                 check = <span class="hljs-literal">true</span>
@@ -415,7 +436,7 @@ You can change it by providing a function as a second argument.</p>
         fifo = [@]
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            top = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            top = fifo.shift()
             <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> top.oversized <span class="hljs-keyword">then</span> action?(i)
             <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> top.contents <span class="hljs-keyword">then</span> action?(i)
 
@@ -433,7 +454,7 @@ You can change it by providing a function as a second argument.</p>
         items = []
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            top = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            top = fifo.shift()
             <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> top.oversized <span class="hljs-keyword">when</span> predicate?(i) <span class="hljs-keyword">then</span> items.push i
             <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> top.contents <span class="hljs-keyword">when</span> predicate?(i) <span class="hljs-keyword">then</span> items.push i
 
@@ -483,7 +504,7 @@ For each node, performs the <code>action</code> function, inside which <code>thi
         fifo = [@]
 
         <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
-            that = fifo.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]
+            that = fifo.shift()
             action.bind(that)()
 
             <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> that.children <span class="hljs-keyword">when</span> that.children[child].tree?

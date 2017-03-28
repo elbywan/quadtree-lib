@@ -6,17 +6,17 @@ mocha       = require 'gulp-mocha'
 istanbul    = require 'gulp-istanbul'
 rename      = require 'gulp-rename'
 docco       = require 'gulp-docco'
-minifyHTML  = require 'gulp-minify-html'
 del         = require 'del'
 
 paths =
-    src: ['src/**/*.coffee']
-    test: ['test/*.coffee']
-    perf: ['test/perf/*.coffee']
-    docindex: ['documentation/quadtree.html']
+    src:        ['src/**/*.coffee']
+    demo:       ['demo/**/*', 'build/js/quadtree.min.js']
+    test:       ['test/*.coffee']
+    perf:       ['test/perf/*.coffee']
+    docindex:   ['docs/quadtree.html']
 
 gulp.task 'clean', () ->
-    del ['build']
+    del ['build', 'docs', 'coverage']
 
 gulp.task 'build', () ->
     gulp.src paths.src
@@ -48,11 +48,15 @@ gulp.task 'watch', () ->
 gulp.task 'generatedoc', () ->
     gulp.src paths.src
         .pipe docco layout: 'linear'
-        .pipe gulp.dest './documentation'
+        .pipe gulp.dest './docs'
 
-gulp.task 'doc', ['generatedoc'], () ->
+gulp.task 'setupdemo', () ->
+    gulp.src paths.demo
+        .pipe gulp.dest './docs/demo'
+
+gulp.task 'doc', ['generatedoc', 'setupdemo'], () ->
     gulp.src paths.docindex
         .pipe rename 'index.html'
-        .pipe gulp.dest './documentation'
+        .pipe gulp.dest './docs'
 
 gulp.task 'default', ['test']

@@ -1,6 +1,6 @@
 # | quadtree-lib | [![Build Status](https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master)](https://travis-ci.org/elbywan/quadtree-lib) | [![Coverage Status](https://coveralls.io/repos/github/elbywan/quadtree-lib/badge.svg?branch=master)](https://coveralls.io/github/elbywan/quadtree-lib?branch=master) | [![NPM](https://nodei.co/npm/quadtree-lib.png?mini=true)](https://nodei.co/npm/quadtree-lib/)
 
-<a href="http://elbywan.github.io/quadtree-lib/demo/" target="_blank">
+<a href="http://elbywan.github.io/quadtree-lib/demo/basic/basic.html" target="_blank">
     <img alt="quatree gif" src="assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px"/>
 </a>
 
@@ -15,7 +15,7 @@ Otherwise, there are many online articles
 ([wikipedia does the job](https://en.wikipedia.org/wiki/Quadtree)) which explain
 the advantages of using the quadtree datastructure in certain situations.
 
-[Here](http://elbywan.github.io/quadtree-lib/demo/) is a small demo of the
+[Here](http://elbywan.github.io/quadtree-lib/demo/basic/basic.html) is a small demo of the
 library in action.
 
 ## Setup

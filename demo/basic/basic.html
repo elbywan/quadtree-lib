@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>quadtree-lib</title>
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <script src="../quadtree.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="basic.css"></link>
+    </head>
+    <body>
+        <h1>Quadtree-lib</h1>
+        <h2>Basic demo</h2>
+        <p class="intro">
+            <span class="highlight">Left click</span> to add <input type="number" value="10" min="0" onchange="eltIncrement = this.value">
+            elements, <span class="highlight">right click</span> to reset, <span class="highlight">mouseover</span> to highlight collisions.
+        </p>
+        <strong id="counter"></strong>
+        <div id="canvas-container">
+            <canvas id="quadtree_canvas"></canvas>
+            <canvas id="layer_canvas" onclick="addElements()" oncontextmenu="init(); return false"
+                onmousemove="hoverMouse(event)" onmouseleave="unregisterMouse()"
+                ontouchmove="hoverMouse(event)"></canvas>
+        </div>
+        <script src="basic.js"></script>
+    </body>
+</html>

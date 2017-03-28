@@ -45,6 +45,7 @@ p.intro span.highlight {
 }
 
 div#canvas-container {
+    max-width: 100%;
     width: 650px;
     height: 650px;
     margin-top: 20px;

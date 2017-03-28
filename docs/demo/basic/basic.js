@@ -4,7 +4,7 @@ var container = document.getElementById("canvas-container")
 var counter = document.getElementById("counter")
 var ctx = canvas.getContext("2d")
 var layerCtx = layer.getContext("2d")
-var width = container.clientWidth
+var width = Math.min(container.clientWidth, window.innerWidth)
 var height = container.clientHeight
 DELAY = 1
 canvas.width = width
@@ -155,9 +155,11 @@ var unregisterMouse = function(){
 }
 var hoverMouse = function(event){
     mousePos = {
-        x: event.offsetX || (event.offsetX === 0 ? 0 : event.changedTouches[0].pageX),
-        y: event.offsetY || (event.offsetY === 0 ? 0 : event.changedTouches[0].pageY)
+        x: event.offsetX || (event.offsetX === 0 ? 0 : event.changedTouches[0].clientX - event.target.getBoundingClientRect().left),
+        y: event.offsetY || (event.offsetY === 0 ? 0 : event.changedTouches[0].clientY - event.target.getBoundingClientRect().top)
     }
+    if(mousePos.x < 0 || mousePos.y < 0)
+        return
     event.stopPropagation()
     event.preventDefault()
     updateLayer()

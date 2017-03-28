@@ -8,11 +8,11 @@ randomNb = (min, max) ->
 describe 'quadtree', () ->
     @.timeout 60000
 
-    perfFunction = (times, size) ->
-        quadtree = new Quadtree width: size, height: size
+    perfFunction = (times, size, buffer = 1) ->
+        quadtree = new Quadtree width: size, height: size, maxElements: buffer
 
         startingTime = new Date()
-        console.log "[Perfs] Starting for #{times} elements with size #{size}, #{startingTime}"
+        console.log "[Perfs] Starting for #{times} elements with size #{size}, #{startingTime} [buffer: #{buffer}]"
         console.log "[Perfs] Adding random elements ..."
 
         for index in [1..times-1]

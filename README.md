@@ -16,7 +16,7 @@ Otherwise, there are many online articles
 the advantages of using the quadtree datastructure in certain situations.
 
 If you want to see the library in action :
-- [Collision demo](http://elbywan.github.io/quadtree-lib/demo/dollisions/collisions.html)
+- [Collision demo](http://elbywan.github.io/quadtree-lib/demo/collisions/collisions.html)
 - [Mass demo](http://elbywan.github.io/quadtree-lib/demo/basic/basic.html)
 
 ## Setup

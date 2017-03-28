@@ -1,6 +1,6 @@
 {
     "name": "quadtree-lib",
-    "version": "0.1.4",
+    "version": "1.0.0",
     "description": "Efficient quadtrees library written in CoffeeScript.",
     "main": "./build/js/quadtree.min.js",
     "devDependencies": {

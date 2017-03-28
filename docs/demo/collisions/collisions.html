@@ -1,16 +1,24 @@
 <html>
     <head>
         <title>quadtree-lib</title>
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <script src="../quadtree.min.js"></script>
+        <script src="../common.js"></script>
+        <link rel="stylesheet" type="text/css" href="../common.css"></link>
         <link rel="stylesheet" type="text/css" href="collisions.css"></link>
     </head>
     <body>
         <h1>Quadtree-lib</h1>
         <h2>Collisions demo</h2>
+        <p class="intro">
+            <span class="highlight">Drag and resize</span> the rectangle to highlight collisions.<br>
+            Elements that are <span class="highlight">computed</span> by the collision algorithm are colored in red.
+        </p>
 
         <div id="canvas-container">
             <canvas id="quadtree_canvas"></canvas>
             <canvas id="layer_canvas"></canvas>
+            <div id="canvas-collision"></div>
         </div>
 
         <script src="collisions.js"></script>

@@ -1,28 +1,39 @@
-@import url('https://fonts.googleapis.com/css?family=Lato');
-
-body {
-    font-family: 'Lato', sans-serif;
-    background-color: #263238;
-    margin: 0;
-}
-
-h1 {
-    background-color: #E53945;
-    color: white;
-    padding: 10px 20px;
-    margin: 0;
-}
-
-h2 {
-    color: #E53945;
-    border-bottom: 2px solid #E53945;
-    padding: 10px 20px;
-    margin: 0;
-}
-
 div#canvas-container {
-    width: 500px;
-    height: 500px;
-    margin-left: auto;
-    margin-right: auto;
+    position: relative;
+}
+
+#quadtree_canvas {
+    position:absolute;
+    z-index: 1;
+}
+
+#layer_canvas {
+    position:absolute;
+    z-index: 2;
+}
+
+div#canvas-collision {
+    position: absolute;
+    cursor: move;
+    z-index: 3;
+    top: 70px;
+    left: 100px;
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 50px;
+    height: 50px;
+    border: 2px solid rgba(229, 57, 53, 0.5);
+}
+
+div#canvas-collision::after {
+    content: "";
+    cursor: nwse-resize;
+    position: absolute;
+    background: transparent;
+    z-index: 4;
+    width: 10px;
+    height: 10px;
+    bottom: -5px;
+    right: -5px;
+    border-right: 2px solid rgba(229, 57, 53, 1);
+    border-bottom: 2px solid rgba(229, 57, 53, 1);
 }

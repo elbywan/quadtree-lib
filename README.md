@@ -1,4 +1,4 @@
-# | quadtree-lib | [![Build Status](https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master)](https://travis-ci.org/elbywan/quadtree-lib) | [![Coverage Status](https://coveralls.io/repos/github/elbywan/quadtree-lib/badge.svg?branch=master)](https://coveralls.io/github/elbywan/quadtree-lib?branch=master) | [![NPM](https://nodei.co/npm/quadtree-lib.png?mini=true)](https://nodei.co/npm/quadtree-lib/)
+# | quadtree-lib | [![Build Status](https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master)](https://travis-ci.org/elbywan/quadtree-lib) | [![Coverage Status](https://coveralls.io/repos/github/elbywan/quadtree-lib/badge.svg?branch=master)](https://coveralls.io/github/elbywan/quadtree-lib?branch=master) | [![npm version](https://badge.fury.io/js/quadtree-lib.svg)](https://www.npmjs.com/package/quadtree-lib)
 
 <a href="http://elbywan.github.io/quadtree-lib/demo/basic/basic.html" target="_blank">
     <img alt="quatree gif" src="assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px"/>
@@ -15,8 +15,9 @@ Otherwise, there are many online articles
 ([wikipedia does the job](https://en.wikipedia.org/wiki/Quadtree)) which explain
 the advantages of using the quadtree datastructure in certain situations.
 
-[Here](http://elbywan.github.io/quadtree-lib/demo/basic/basic.html) is a small demo of the
-library in action.
+If you want to see the library in action :
+- [Collision demo](http://elbywan.github.io/quadtree-lib/demo/dollisions/collisions.html)
+- [Mass demo](http://elbywan.github.io/quadtree-lib/demo/basic/basic.html)
 
 ## Setup
 
@@ -81,6 +82,17 @@ quadtree.push({
     width: 1,   //Optional, defaults to 1
     height: 2   //Optional, defaults to 1
 }, true) //Optional, defaults to false
+```
+
+To insert an array of elements, use the **pushAll** method which is faster than inserting each element with push.
+
+```javascript
+quadtree.pushAll([
+    {x: 1, y: 1},
+    {x: 2, y: 2}
+    // ... //
+])
+
 ```
 
 ### Removing elements

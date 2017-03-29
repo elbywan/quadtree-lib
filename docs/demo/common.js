@@ -51,8 +51,14 @@ var drawQuadtree = function(tree, fill, context) {
 var makeMovable = function(element, boundaryElement, callbacks) {
     var resizeAction = function(event) {
         var targetRect = element.getBoundingClientRect()
-        element.style.height = Math.max(5, event.clientY - targetRect.top)
-        element.style.width  = Math.max(5, event.clientX - targetRect.left)
+        if(boundaryElement) {
+            var boundaries = boundaryElement.getBoundingClientRect()
+            element.style.height = Math.max(5, Math.min(event.clientY - targetRect.top,  boundaries.bottom - targetRect.top))
+            element.style.width  = Math.max(5, Math.min(event.clientX - targetRect.left, boundaries.right  - targetRect.left))
+        } else {
+            element.style.height = Math.max(5, event.clientY - targetRect.top)
+            element.style.width  = Math.max(5, event.clientX - targetRect.left)
+        }
 
         if(callbacks && callbacks.onResize && typeof callbacks.onResize === "function") {
             callbacks.onResize()

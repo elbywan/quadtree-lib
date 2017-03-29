@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
 
 html { margin: 0; padding: 0;}
+
 body {
     font-family: 'Lato', sans-serif;
     background-color: #263238;
@@ -8,6 +9,7 @@ body {
     height:100%;
     width: 100%;
 }
+
 h1 {
     background-color: #E53945;
     color: white;
@@ -20,6 +22,15 @@ h2 {
     border-bottom: 2px solid #E53945;
     padding: 10px 20px;
     margin: 0;
+}
+
+.github-corner {
+    fill: white;
+    color: #E53945;
+    transition: fill 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+.github-corner:hover {
+    color: black;
 }
 
 p.intro {

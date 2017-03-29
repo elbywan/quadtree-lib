@@ -180,10 +180,62 @@ Visits each node of the quadtree. (meaning subtrees)
 ```javascript
 quadtree.visit(function(){
     // This function is called once for each node.
-    //this -> this is always the current node.
+    // *this* is a pointer to the current node.
     console.log(this.contents)
 })
 ```
+
+### Pretty print
+
+Outputs the tree and its contents in an eye friendly format.
+
+```javascript
+var quadtree = new Quadtree({
+  width: 10,
+  height: 10,
+  maxElements: 1
+});
+
+var elementArray = [
+  element0 = {
+    x: 0,
+    y: 0,
+    toString: function() {
+      return 0;
+    }
+  }, element1 = {
+    x: 3,
+    y: 3,
+    toString: function() {
+      return 1;
+    }
+  }
+];
+
+quadtree.pushAll(elementArray);
+
+console.log(quadtree.pretty());
+```
+
+Console output :
+
+```
+| ROOT
+| ------------
+└──┐
+   | NW
+   | ------------
+   └──┐
+      | SE
+      | ------------
+      | * Leaf content *
+      |   1
+      | NW
+      | ------------
+      | * Leaf content *
+      |   0
+```
+
 
 ## Further documentation
 

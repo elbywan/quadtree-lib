@@ -154,7 +154,7 @@ class Quadtree
             tree = top.tree
             elements = top.elements
 
-            fifoCandidates = "NW": null, "NE": null, "SW": null, "SE": null
+            fifoCandidates = { "NW": null, "NE": null, "SW": null, "SE": null }
 
             for element in elements
                 tree.size++
@@ -169,12 +169,12 @@ class Quadtree
                     tree.contents.push element
 
                 else
-                    fifoCandidates[direction] ?= tree: relatedChild.get(), elements: []
+                    fifoCandidates[direction] ?= { tree: relatedChild.get(), elements: [] }
                     fifoCandidates[direction].elements.push(element)
 
                     for content in tree.contents
                         contentDir = calculateDirection content, tree
-                        fifoCandidates[contentDir] ?= tree: tree.children[contentDir].get(), elements: []
+                        fifoCandidates[contentDir] ?= { tree: tree.children[contentDir].get(), elements: [] }
                         fifoCandidates[contentDir].elements.push(content)
 
                     tree.contents = []
@@ -355,6 +355,46 @@ class Quadtree
             for child of that.children when that.children[child].tree?
                 fifo.push that.children[child].tree
         @
+
+    # Pretty printing function.
+    pretty: () ->
+        str = ""
+
+        indent = (level) ->
+            res = ""
+            res += "   " for times in [level...0]
+            res
+
+        fifo  = [{ label: "ROOT", tree: @, level: 0 }]
+        while fifo.length > 0
+            top = fifo.shift()
+            indentation = indent(top.level)
+            str += """
+                   #{indentation}| #{top.label}
+                   #{indentation}| ------------\n
+                   """
+
+            if top.tree.oversized.length > 0
+                str += """
+                       #{indentation}| * Oversized elements *
+                       #{indentation}|   #{top.tree.oversized}\n
+                       """
+
+            if top.tree.contents.length > 0
+                str += """
+                       #{indentation}| * Leaf content *
+                       #{indentation}|   #{top.tree.contents}\n
+                       """
+
+            isParent = false
+            for child of top.tree.children when top.tree.children[child].tree?
+                isParent = true
+                fifo.unshift { label: child, tree: top.tree.children[child].tree, level: top.level + 1 }
+
+            if isParent then str += "#{indentation}└──┐\n"
+
+        str
+
 
 # Require export.
 module?.exports = Quadtree

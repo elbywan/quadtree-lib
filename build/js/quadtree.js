@@ -473,6 +473,53 @@ Quadtree = (function() {
     return this;
   };
 
+  Quadtree.prototype.pretty = function() {
+    var child, fifo, indent, indentation, isParent, str, top;
+    str = "";
+    indent = function(level) {
+      var j, ref, res, times;
+      res = "";
+      for (times = j = ref = level; ref <= 0 ? j < 0 : j > 0; times = ref <= 0 ? ++j : --j) {
+        res += "   ";
+      }
+      return res;
+    };
+    fifo = [
+      {
+        label: "ROOT",
+        tree: this,
+        level: 0
+      }
+    ];
+    while (fifo.length > 0) {
+      top = fifo.shift();
+      indentation = indent(top.level);
+      str += indentation + "| " + top.label + "\n" + indentation + "| ------------\n";
+      if (top.tree.oversized.length > 0) {
+        str += indentation + "| * Oversized elements *\n" + indentation + "|   " + top.tree.oversized + "\n";
+      }
+      if (top.tree.contents.length > 0) {
+        str += indentation + "| * Leaf content *\n" + indentation + "|   " + top.tree.contents + "\n";
+      }
+      isParent = false;
+      for (child in top.tree.children) {
+        if (!(top.tree.children[child].tree != null)) {
+          continue;
+        }
+        isParent = true;
+        fifo.unshift({
+          label: child,
+          tree: top.tree.children[child].tree,
+          level: top.level + 1
+        });
+      }
+      if (isParent) {
+        str += indentation + "└──┐\n";
+      }
+    }
+    return str;
+  };
+
   return Quadtree;
 
 })();

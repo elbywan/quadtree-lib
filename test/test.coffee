@@ -16,6 +16,7 @@ describe 'quadtree', () ->
         assert.throws (() -> new Quadtree x:1,  y:-1, width:10, height: 10), Error
         assert.throws (() -> new Quadtree x:1,  y:1,  width:0,  height: 10), Error
         assert.throws (() -> new Quadtree x:1,  y:1,  width:10, height: -1), Error
+        assert.throws (() -> new Quadtree x:1,  y:1,  width:10, height: 10, maxElements: -1), Error
 
     it 'should reject improper elements', () ->
         quadtree = new Quadtree width: 100, height: 100
@@ -45,6 +46,12 @@ describe 'quadtree', () ->
         quadtree.remove element
         assert.equal quadtree.size, 0
 
+    it 'should return false when trying to remove an unknown element', () ->
+        quadtree = new Quadtree width: 100, height: 100
+        quadtree.push element = x: 0, y: 0, content: 'element 0'
+        assert.equal quadtree.remove(x: 10, y: 10), false
+        assert.equal quadtree.size, 1
+
     it 'should detect colliding elements', () ->
         quadtree = new Quadtree width: 100, height: 100
         quadtree.pushAll [
@@ -58,9 +65,9 @@ describe 'quadtree', () ->
             element7 =  x: 49, y: 50, width: 1, height : 1,
             element8 =  x: 50, y: 50, width: 1, height : 1,
             element9 =  x: 99, y: 99,
-            element10 = x: 99, y: 99]
+            element10 = x: 99, y: 99 ]
 
-        assert.equal quadtree.size,11
+        assert.equal quadtree.size, 11
         assert.equal (quadtree.colliding element0)[0], element1
         assert.equal (quadtree.colliding element1)[0], element0
         assert.equal (quadtree.colliding element2)[0], element3
@@ -257,3 +264,59 @@ describe 'quadtree', () ->
         assert.equal(whereResult1.length, 0)
         assert.equal(whereResult2.length, 2)
         assert.equal(whereResult3.length, 1)
+
+    it 'should pretty print the quadtree', () ->
+        quadtree = new Quadtree width: 20, height: 20, maxElements: 2
+        elementArray = [
+            element0 = {x: 0,  y: 0,  toString: () -> 0},
+            element1 = {x: 2,  y: 2,  toString: () -> 1},
+            element2 = {x: 4,  y: 4,  toString: () -> 2},
+            element3 = {x: 6,  y: 6,  toString: () -> 3},
+            element4 = {x: 8,  y: 8,  toString: () -> 4},
+            element5 = {x: 10, y: 8,  toString: () -> 5},
+            element6 = {x: 12, y: 12, toString: () -> 6},
+            element7 = {x: 8,  y: 14, toString: () -> 7},
+            element8 = {x: 6,  y: 16, toString: () -> 8},
+            element9 = {x: 18, y: 18, toString: () -> 9}
+            overweight = {x: 10, y: 10, width: 5, height: 5, toString: () -> "overweight"}
+        ]
+        quadtree.pushAll elementArray
+
+        fixedOutput =  """
+                       | ROOT
+                       | ------------
+                       └──┐
+                          | SE
+                          | ------------
+                          | * Oversized elements *
+                          |   overweight
+                          | * Leaf content *
+                          |   6,9
+                          | SW
+                          | ------------
+                          | * Leaf content *
+                          |   7,8
+                          | NE
+                          | ------------
+                          | * Leaf content *
+                          |   5
+                          | NW
+                          | ------------
+                          └──┐
+                             | SE
+                             | ------------
+                             | * Leaf content *
+                             |   3,4
+                             | NW
+                             | ------------
+                             └──┐
+                                | SE
+                                | ------------
+                                | * Leaf content *
+                                |   1,2
+                                | NW
+                                | ------------
+                                | * Leaf content *
+                                |   0\n
+                                """
+        assert.equal(quadtree.pretty(), fixedOutput)

@@ -165,7 +165,7 @@ class Quadtree
                 if tree.width is 1 or tree.height is 1 or isOversized element, relatedChild.create()
                     tree.oversized.push element
 
-                else if tree.size <= tree.maxElements
+                else if (tree.size - tree.oversized.length) <= tree.maxElements
                     tree.contents.push element
 
                 else
@@ -195,7 +195,7 @@ class Quadtree
             return true
         index = @contents.indexOf item
         if index > - 1
-            @oversized.splice index, 1
+            @contents.splice index, 1
             @size--
             return true
 

@@ -154,11 +154,11 @@ describe 'quadtree', () ->
         quadtree = new Quadtree width: 100, height: 100
 
         elementArray = [
-            element0 = x: 55, y: 60, width: 10, height: 10,
-            element1 = x: 60, y: 65, width: 15, height: 10,
-            element2 = x: 10, y: 10, width: 5, height: 5,
-            element3 = x: 12, y: 20, width: 5, height: 5,
-            element4 = x: 49, y: 49 ]
+            element0 = x: 55, y: 60, width: 10, height: 10, toString: () -> 0,
+            element1 = x: 60, y: 65, width: 15, height: 10, toString: () -> 1,
+            element2 = x: 10, y: 10, width: 5, height: 5, toString: () -> 2,
+            element3 = x: 12, y: 20, width: 5, height: 5, toString: () -> 3,
+            element4 = x: 49, y: 49, toString: () -> 4 ]
 
         quadtree.pushAll elementArray
 
@@ -168,7 +168,7 @@ describe 'quadtree', () ->
             element.width > 5
 
         for element in elementArray
-            quadtree.remove element
+            assert.equal quadtree.remove(element), true
 
         assert.equal quadtree.size, 0
 

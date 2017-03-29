@@ -188,7 +188,7 @@ Quadtree = (function() {
         relatedChild = tree.children[direction];
         if (tree.width === 1 || tree.height === 1 || isOversized(element, relatedChild.create())) {
           tree.oversized.push(element);
-        } else if (tree.size <= tree.maxElements) {
+        } else if ((tree.size - tree.oversized.length) <= tree.maxElements) {
           tree.contents.push(element);
         } else {
           if (fifoCandidates[direction] == null) {
@@ -234,7 +234,7 @@ Quadtree = (function() {
     }
     index = this.contents.indexOf(item);
     if (index > -1) {
-      this.oversized.splice(index, 1);
+      this.contents.splice(index, 1);
       this.size--;
       return true;
     }

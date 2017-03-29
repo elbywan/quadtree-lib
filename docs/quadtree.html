@@ -262,7 +262,7 @@ Elements can be observed to reorganize them into the quadtree automatically when
             tree = top.tree
             elements = top.elements
 
-            fifoCandidates = <span class="hljs-string">"NW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"NE"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SE"</span>: <span class="hljs-literal">null</span>
+            fifoCandidates = { <span class="hljs-string">"NW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"NE"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SW"</span>: <span class="hljs-literal">null</span>, <span class="hljs-string">"SE"</span>: <span class="hljs-literal">null</span> }
 
             <span class="hljs-keyword">for</span> element <span class="hljs-keyword">in</span> elements
                 tree.size++
@@ -273,16 +273,16 @@ Elements can be observed to reorganize them into the quadtree automatically when
                 <span class="hljs-keyword">if</span> tree.width <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> tree.height <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> isOversized element, relatedChild.create()
                     tree.oversized.push element
 
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> tree.size &lt;= tree.maxElements
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (tree.size - tree.oversized.length) &lt;= tree.maxElements
                     tree.contents.push element
 
                 <span class="hljs-keyword">else</span>
-                    fifoCandidates[direction] ?= tree: relatedChild.get(), elements: []
+                    fifoCandidates[direction] ?= { tree: relatedChild.get(), elements: [] }
                     fifoCandidates[direction].elements.push(element)
 
                     <span class="hljs-keyword">for</span> content <span class="hljs-keyword">in</span> tree.contents
                         contentDir = calculateDirection content, tree
-                        fifoCandidates[contentDir] ?= tree: tree.children[contentDir].get(), elements: []
+                        fifoCandidates[contentDir] ?= { tree: tree.children[contentDir].get(), elements: [] }
                         fifoCandidates[contentDir].elements.push(content)
 
                     tree.contents = []
@@ -307,7 +307,7 @@ Elements can be observed to reorganize them into the quadtree automatically when
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
         index = @contents.indexOf item
         <span class="hljs-keyword">if</span> index &gt; - <span class="hljs-number">1</span>
-            @oversized.splice index, <span class="hljs-number">1</span>
+            @contents.splice index, <span class="hljs-number">1</span>
             @size--
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
 
@@ -510,6 +510,49 @@ For each node, performs the <code>action</code> function, inside which <code>thi
             <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> that.children <span class="hljs-keyword">when</span> that.children[child].tree?
                 fifo.push that.children[child].tree
         @</pre></div>
+        
+      
+        
+        <p>Pretty printing function.</p>
+
+        
+          <div class='highlight'><pre>    pretty: <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span>
+        str = <span class="hljs-string">""</span>
+<span class="hljs-function">
+        <span class="hljs-title">indent</span> = <span class="hljs-params">(level)</span> -&gt;</span>
+            res = <span class="hljs-string">""</span>
+            res += <span class="hljs-string">"   "</span> <span class="hljs-keyword">for</span> times <span class="hljs-keyword">in</span> [level..<span class="hljs-number">.0</span>]
+            res
+
+        fifo  = [{ label: <span class="hljs-string">"ROOT"</span>, tree: @, level: <span class="hljs-number">0</span> }]
+        <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
+            top = fifo.shift()
+            indentation = indent(top.level)
+            str += <span class="hljs-string">"""
+                   <span class="hljs-subst">#{indentation}</span>| <span class="hljs-subst">#{top.label}</span>
+                   <span class="hljs-subst">#{indentation}</span>| ------------\n
+                   """</span>
+
+            <span class="hljs-keyword">if</span> top.tree.oversized.length &gt; <span class="hljs-number">0</span>
+                str += <span class="hljs-string">"""
+                       <span class="hljs-subst">#{indentation}</span>| * Oversized elements *
+                       <span class="hljs-subst">#{indentation}</span>|   <span class="hljs-subst">#{top.tree.oversized}</span>\n
+                       """</span>
+
+            <span class="hljs-keyword">if</span> top.tree.contents.length &gt; <span class="hljs-number">0</span>
+                str += <span class="hljs-string">"""
+                       <span class="hljs-subst">#{indentation}</span>| * Leaf content *
+                       <span class="hljs-subst">#{indentation}</span>|   <span class="hljs-subst">#{top.tree.contents}</span>\n
+                       """</span>
+
+            isParent = <span class="hljs-literal">false</span>
+            <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> top.tree.children <span class="hljs-keyword">when</span> top.tree.children[child].tree?
+                isParent = <span class="hljs-literal">true</span>
+                fifo.unshift { label: child, tree: top.tree.children[child].tree, level: top.level + <span class="hljs-number">1</span> }
+
+            <span class="hljs-keyword">if</span> isParent <span class="hljs-keyword">then</span> str += <span class="hljs-string">"<span class="hljs-subst">#{indentation}</span>└──┐\n"</span>
+
+        str</pre></div>
         
       
         

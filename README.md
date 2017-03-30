@@ -27,10 +27,16 @@ From the command line :
 
 `npm install quadtree-lib` or `yarn add quadtree-lib`
 
-Then in your javascript file :
+Then :
 
 ```javascript
 Quadtree = require("quadtree-lib")
+```
+
+Or eventually :
+
+```html
+<script src="path/to/quadtree-lib.min.js"></script>
 ```
 
 ### Using Bower
@@ -39,11 +45,21 @@ Quadtree = require("quadtree-lib")
 
 ### Using gulp
 
-Clone the git repository, run
-`git clone https://github.com/elbywan/quadtree-lib`  
+In your favorite terminal :
 
--   To build the library, run `gulp`.
--   To run the performance tests, run `gulp perf`.
+```bash
+# 1°clone the repo
+git clone https://github.com/elbywan/quadtree-lib
+# 2° change dir
+cd quadtree-lib
+# 3° build the library
+gulp
+# 4° build the documentation
+gulp doc
+# 5° run performance tests
+gulp perf
+# 6° profit
+```
 
 ## Usage
 

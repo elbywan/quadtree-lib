@@ -65,3 +65,10 @@ div#canvas-container {
     box-shadow: 1px 1px 50px;
     background-color: #212121;
 }
+
+#counter {
+    padding: 5px 15px;
+    color: #E53945;
+    border: 1px solid #E53945;
+    margin: 10px;
+}

@@ -7,10 +7,3 @@
     position:absolute;
     z-index: 2;
 }
-
-#counter {
-    padding: 5px 15px;
-    color: #E53945;
-    border: 1px solid #E53945;
-    margin: 10px;
-}

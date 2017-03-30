@@ -4,11 +4,12 @@ var layer = document.getElementById("layer_canvas")
 var layerCtx = layer.getContext("2d")
 var container = document.getElementById("canvas-container")
 var collisitionRect = document.getElementById("canvas-collision")
+var counter = document.getElementById("counter")
 var width = Math.min(container.clientWidth, window.innerWidth)
 var height = width === window.innerWidth ? window.innerWidth : container.clientHeight
 
 quadtreeColor = 'rgba(120, 144, 156, 0.1)'
-checkedColor = 'rgba(229, 57, 53, 1)'
+scannedColor = 'rgba(229, 57, 53, 1)'
 eltColor = 'rgba(136, 14, 79, 1)'
 collidingColor = '#F57F17'
 
@@ -69,9 +70,14 @@ var updateCanvas = function(){
 }
 
 var updateLayer = function(){
+    var scanned = 0
+    var colliding = 0
+    var total = quadtree.size
+
     var monkeyPatchCollisionAlgorithm = function(elt1, elt2) {
-        layerCtx.fillStyle = checkedColor
+        layerCtx.fillStyle = scannedColor
         drawSquare(elt2, true, layerCtx)
+        scanned++
         var ref, ref1, ref2, ref3
         return !(elt1.x > elt2.x + ((ref = elt2.width) != null ? ref : 0) || elt1.x + ((ref1 = elt1.width) != null ? ref1 : 0) < elt2.x || elt1.y > elt2.y + ((ref2 = elt2.height) != null ? ref2 : 0) || elt1.y + ((ref3 = elt1.height) != null ? ref3 : 0) < elt2.y);
     }
@@ -90,5 +96,12 @@ var updateLayer = function(){
     quadtree.colliding(coordinates, monkeyPatchCollisionAlgorithm).forEach(function(elt) {
         layerCtx.fillStyle = collidingColor
         drawSquare(elt, true, layerCtx)
+        colliding++
     })
+
+    updateCounters(scanned, colliding, total)
+}
+
+var updateCounters = function(scanned, colliding, total) {
+    counter.innerHTML = "Total : " + total + " | Scanned : " + scanned + " | Colliding : " + colliding
 }

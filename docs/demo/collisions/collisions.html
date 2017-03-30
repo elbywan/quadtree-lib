@@ -15,7 +15,11 @@
             <span class="highlight">Drag and resize</span> the rectangle to highlight collisions.<br>
             Elements that are <span class="highlight">scanned</span> by the collision algorithm are colored in red.
         </p>
-        <strong id="counter"></strong>
+        <div>
+            <strong id="counter"></strong>
+            <button class="action" onclick="addElements()">Add elements</button>
+            <button class="action" onclick="init()">Reset</button>
+        </div>
         <div id="canvas-container">
             <canvas id="quadtree_canvas"></canvas>
             <canvas id="layer_canvas"></canvas>

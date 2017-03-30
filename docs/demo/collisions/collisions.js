@@ -14,6 +14,7 @@ eltColor = 'rgba(136, 14, 79, 1)'
 collidingColor = '#F57F17'
 
 eltNb = 1000
+eltIncrement = 100
 
 document.addEventListener('DOMContentLoaded', function () {
     init()
@@ -25,8 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
             updateLayer()
         }
     })
-    updateCanvas()
-    updateLayer()
 })
 
 var init = function(){
@@ -45,15 +44,11 @@ var init = function(){
     var elts = []
     for(var i = 0; i < eltNb; i++) {
         var squareSize = randomNb(5, 15)
-        elts.push({
-            x: randomNb(0, width),
-            y: randomNb(0, height),
-            width: squareSize,
-            height: squareSize,
-            color: eltColor
-        })
+        elts.push(randomizeElement())
     }
     quadtree.pushAll(elts)
+    updateCanvas()
+    updateLayer()
 }
 
 var updateCanvas = function(){
@@ -86,8 +81,8 @@ var updateLayer = function(){
     var containerBox = container.getBoundingClientRect()
     var collisionBox = collisitionRect.getBoundingClientRect()
     var coordinates = {
-        x: collisionBox.x - containerBox.x,
-        y: collisionBox.y - containerBox.y,
+        x: collisionBox.left - containerBox.left,
+        y: collisionBox.top - containerBox.top,
         width: collisionBox.width,
         height: collisionBox.height
     }
@@ -102,6 +97,26 @@ var updateLayer = function(){
     updateCounters(scanned, colliding, total)
 }
 
+var randomizeElement = function() {
+    var squareSize = randomNb(5, 15)
+    return {
+        x: randomNb(0, width),
+        y: randomNb(0, height),
+        width: squareSize,
+        height: squareSize,
+        color: eltColor
+    }
+}
+
 var updateCounters = function(scanned, colliding, total) {
     counter.innerHTML = "Total : " + total + " | Scanned : " + scanned + " | Colliding : " + colliding
+}
+
+var addElements = function(){
+    var elementArray = []
+    for(var i = 0; i < eltIncrement; i++)
+        elementArray.push(randomizeElement())
+    quadtree.pushAll(elementArray)
+    updateCanvas()
+    updateLayer()
 }

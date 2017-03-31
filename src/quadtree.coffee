@@ -338,7 +338,7 @@ class Quadtree
 
         deepclone @
 
-    # Opposite of filter
+    # Opposite of filter.
     reject: (predicate) ->
         @filter (i) ->
             not predicate?(i)

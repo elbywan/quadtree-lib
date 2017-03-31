@@ -2,7 +2,17 @@
     "name": "quadtree-lib",
     "version": "1.0.1",
     "description": "Efficient quadtrees library written in CoffeeScript.",
+    "author": "Julien Elbaz",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/elbywan/quadtree-lib"
+    },
+    "bugs": {
+        "url": "https://github.com/elbywan/quadtree-lib/issues"
+    },
     "main": "./build/js/quadtree.min.js",
+    "types": "./typings/quadtree.d.ts",
     "devDependencies": {
         "coffee-coverage": "^1.0.1",
         "coffee-script": "^1.10.0",
@@ -30,13 +40,8 @@
         "2d",
         "data structure"
     ],
-    "author": "Julien Elbaz",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/elbywan/quadtree-lib"
-    },
-    "bugs": {
-        "url": "https://github.com/elbywan/quadtree-lib/issues"
-    }
+    "files": [
+        "build/",
+        "typings/"
+    ]
 }

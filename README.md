@@ -80,6 +80,20 @@ var quadtree = new Quadtree({
 `maxElements` (default 1) is the maximum number of elements contained in a leaf before it
 splits into child trees.
 
+### For typescript users
+
+A set of declaration files (.d.ts) is included, which means that you have access to auto-completion and embedded documentation in your favorite IDE.
+
+If you are using the library **globally** with a `<script>` tag, add the following declaration import :
+```typescript
+/// <reference types="quadtree-lib" />
+```
+
+Otherwise, if you are using the **commonjs** way :
+```typescript
+import * as Quadtree from "quadtree-lib"
+```
+
 ### Adding elements
 
 Elements must be objects, with coordinates set.

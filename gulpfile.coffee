@@ -11,7 +11,7 @@ del         = require 'del'
 
 paths =
     src:        ['src/**/*.coffee']
-    demo:       ['demo/**/*', 'build/js/quadtree.min.js', 'build/js/quadtree.min.js.map', 'assets/*']
+    demo:       ['demo/**/*', 'build/js/quadtree.min.js', 'build/js/quadtree.min.js.map']
     test:       ['test/*.coffee']
     perf:       ['test/perf/*.coffee']
     docindex:   ['docs/quadtree.html']
@@ -57,7 +57,11 @@ gulp.task 'setupdemo', () ->
     gulp.src paths.demo
         .pipe gulp.dest './docs/demo'
 
-gulp.task 'doc', ['generatedoc', 'setupdemo'], () ->
+gulp.task 'copyassets', () ->
+    gulp.src 'assets/**/*'
+        .pipe gulp.dest './docs/assets'
+
+gulp.task 'doc', ['generatedoc', 'setupdemo', 'copyassets'], () ->
     gulp.src paths.docindex
         .pipe rename 'index.html'
         .pipe gulp.dest './docs'

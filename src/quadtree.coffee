@@ -4,16 +4,25 @@
 # **Quadtree-lib** is an easy to use, developer friendly quadtree library
 # which contains many helper methods to add, remove, iterate, filter, simulate
 # collisions over 2d elements and more.
-#
-# The Quadtree class.
+
+# #### UMD bundling related code
+((root, factory) ->
+    if typeof define is 'function' and define.amd
+        define [], factory
+    else if typeof exports is 'object' and module.exports
+        module.exports = factory()
+    else
+        root["Quadtree"] = factory()
+) @, () ->
+# The Quadtree class
 # -------------------
 class Quadtree
     # ### Constructor
 
-    # A quadtree constructor has 5 parameters :
-    # - x & y coordinates which are always (0, 0) for the root tree.
-    # - its dimensions (width & length), mandatory.
-    # - the maximum number of elements before the leaf 'splits' into subtrees. (defaults to 1)
+    # The quadtree constructor accepts a single parameter object containing the following properties :
+    # - width / length : dimensions of the quadtree. [ *mandatory* ]
+    # - maxElements : the maximum number of elements before the leaf 'splits' into subtrees. [ *defaults to 1* ]
+    # - x / y : these coordinates are used internally by the library to position subtrees. [ *internal use only* ]
     constructor: ({@x, @y, @width, @height, @maxElements}) ->
 
         # An error is thrown when the width & length are not passed as constructor arguments.
@@ -394,7 +403,3 @@ class Quadtree
             if isParent then str += "#{indentation}└──┐\n"
 
         str
-
-
-# Require export.
-module?.exports = Quadtree

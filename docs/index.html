@@ -27,7 +27,25 @@
         <p><strong>Quadtree-lib</strong> is an easy to use, developer friendly quadtree library
 which contains many helper methods to add, remove, iterate, filter, simulate
 collisions over 2d elements and more.</p>
-<h2 id="the-quadtree-class-">The Quadtree class.</h2>
+
+        
+      
+        
+        <h4 id="umd-bundling-related-code">UMD bundling related code</h4>
+
+        
+          <div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-params">(root, factory)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> define <span class="hljs-keyword">is</span> <span class="hljs-string">'function'</span> <span class="hljs-keyword">and</span> define.amd
+        define [], factory
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> exports <span class="hljs-keyword">is</span> <span class="hljs-string">'object'</span> <span class="hljs-keyword">and</span> <span class="hljs-built_in">module</span>.exports
+        <span class="hljs-built_in">module</span>.exports = factory()
+    <span class="hljs-keyword">else</span>
+        root[<span class="hljs-string">"Quadtree"</span>] = factory()
+) @, <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span></pre></div>
+        
+      
+        
+        <h2 id="the-quadtree-class">The Quadtree class</h2>
 
         
       
@@ -43,11 +61,11 @@ collisions over 2d elements and more.</p>
         
       
         
-        <p>A quadtree constructor has 5 parameters :</p>
+        <p>The quadtree constructor accepts a single parameter object containing the following properties :</p>
 <ul>
-<li>x &amp; y coordinates which are always (0, 0) for the root tree.</li>
-<li>its dimensions (width &amp; length), mandatory.</li>
-<li>the maximum number of elements before the leaf ‘splits’ into subtrees. (defaults to 1)</li>
+<li>width / length : dimensions of the quadtree. [ <em>mandatory</em> ]</li>
+<li>maxElements : the maximum number of elements before the leaf ‘splits’ into subtrees. [ <em>defaults to 1</em> ]</li>
+<li>x / y : these coordinates are used internally by the library to position subtrees. [ <em>internal use only</em> ]</li>
 </ul>
 
         
@@ -487,7 +505,7 @@ You can change it by providing a function as a second argument.</p>
         
       
         
-        <p>Opposite of filter</p>
+        <p>Opposite of filter.</p>
 
         
           <div class='highlight'><pre>    reject: <span class="hljs-function"><span class="hljs-params">(predicate)</span> -&gt;</span>
@@ -553,13 +571,6 @@ For each node, performs the <code>action</code> function, inside which <code>thi
             <span class="hljs-keyword">if</span> isParent <span class="hljs-keyword">then</span> str += <span class="hljs-string">"<span class="hljs-subst">#{indentation}</span>└──┐\n"</span>
 
         str</pre></div>
-        
-      
-        
-        <p>Require export.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-built_in">module</span>?.exports = Quadtree</pre></div>
         
       
       <div class="fleur">h</div>

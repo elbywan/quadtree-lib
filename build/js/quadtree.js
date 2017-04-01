@@ -1,5 +1,15 @@
 var Quadtree;
 
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    return define([], factory);
+  } else if (typeof exports === 'object' && module.exports) {
+    return module.exports = factory();
+  } else {
+    return root["Quadtree"] = factory();
+  }
+})(this, function() {});
+
 Quadtree = (function() {
   var calculateDirection, getCenter, isOversized, observe, validateElement;
 
@@ -524,6 +534,4 @@ Quadtree = (function() {
 
 })();
 
-if (typeof module !== "undefined" && module !== null) {
-  module.exports = Quadtree;
-}
+//# sourceMappingURL=quadtree.js.map

@@ -11,7 +11,7 @@ del         = require 'del'
 
 paths =
     src:        ['src/**/*.coffee']
-    demo:       ['demo/**/*', 'build/js/quadtree.min.js', 'build/js/quadtree.min.js.map']
+    demo:       ['demo/**/*', 'build/js/quadtree.min.js', 'build/js/quadtree.min.js.map', 'assets/*']
     test:       ['test/*.coffee']
     perf:       ['test/perf/*.coffee']
     docindex:   ['docs/quadtree.html']

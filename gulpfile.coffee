@@ -25,21 +25,22 @@ gulp.task 'build', () ->
         .pipe coffee bare: true
         .pipe sourcemaps.write '.'
         .pipe gulp.dest('build/js')
-        .pipe(filter('**/*.js'))
+        .pipe filter('**/*.js')
         .pipe uglify()
         .pipe rename extname: '.min.js'
         .pipe sourcemaps.write '.'
         .pipe gulp.dest 'build/js'
 
 
-gulp.task 'test', ['build'], () ->
+gulp.task 'pre-test', ['build'], () ->
     gulp.src 'build/js/quadtree.js'
         .pipe istanbul()
         .pipe istanbul.hookRequire()
-        .on 'finish', ->
-            gulp.src paths.test, read: false
-            .pipe mocha reporter: 'nyan'
-            .pipe istanbul.writeReports()
+
+gulp.task 'test', ['pre-test'], () ->
+    gulp.src paths.test, read: false
+        .pipe mocha reporter: 'nyan'
+        .pipe istanbul.writeReports()
 
 gulp.task 'perf', ['build'], () ->
     gulp.src paths.perf, read: false

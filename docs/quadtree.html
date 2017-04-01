@@ -41,7 +41,7 @@ collisions over 2d elements and more.</p>
         <span class="hljs-built_in">module</span>.exports = factory()
     <span class="hljs-keyword">else</span>
         root[<span class="hljs-string">"Quadtree"</span>] = factory()
-) @, <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span></pre></div>
+) @, <span class="hljs-function">(<span class="hljs-params">()</span> -&gt;</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Quadtree</span></span></pre></div>
         
       
         
@@ -51,8 +51,6 @@ collisions over 2d elements and more.</p>
       
         
         
-        
-          <div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Quadtree</span></span></pre></div>
         
       
         
@@ -570,7 +568,8 @@ For each node, performs the <code>action</code> function, inside which <code>thi
 
             <span class="hljs-keyword">if</span> isParent <span class="hljs-keyword">then</span> str += <span class="hljs-string">"<span class="hljs-subst">#{indentation}</span>└──┐\n"</span>
 
-        str</pre></div>
+        str
+)</pre></div>
         
       
       <div class="fleur">h</div>

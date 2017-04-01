@@ -1,6 +1,6 @@
 {
     "name": "quadtree-lib",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Efficient quadtrees library written in CoffeeScript.",
     "author": "Julien Elbaz",
     "license": "MIT",

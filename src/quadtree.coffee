@@ -13,10 +13,10 @@
         module.exports = factory()
     else
         root["Quadtree"] = factory()
-) @, () ->
-# The Quadtree class
-# -------------------
-class Quadtree
+) @, (() -> class Quadtree
+    # The Quadtree class
+    # -------------------
+
     # ### Constructor
 
     # The quadtree constructor accepts a single parameter object containing the following properties :
@@ -403,3 +403,4 @@ class Quadtree
             if isParent then str += "#{indentation}└──┐\n"
 
         str
+)

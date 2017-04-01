@@ -1,6 +1,7 @@
 gulp        = require 'gulp'
 coffee      = require 'gulp-coffee'
 uglify      = require 'gulp-uglify'
+filter      = require 'gulp-filter'
 sourcemaps  = require 'gulp-sourcemaps'
 mocha       = require 'gulp-mocha'
 istanbul    = require 'gulp-istanbul'
@@ -10,7 +11,7 @@ del         = require 'del'
 
 paths =
     src:        ['src/**/*.coffee']
-    demo:       ['demo/**/*', 'build/js/quadtree.min.js']
+    demo:       ['demo/**/*', 'build/js/quadtree.min.js', 'build/js/quadtree.min.js.map']
     test:       ['test/*.coffee']
     perf:       ['test/perf/*.coffee']
     docindex:   ['docs/quadtree.html']
@@ -22,10 +23,12 @@ gulp.task 'build', () ->
     gulp.src paths.src
         .pipe sourcemaps.init()
         .pipe coffee bare: true
+        .pipe sourcemaps.write '.'
         .pipe gulp.dest('build/js')
+        .pipe(filter('**/*.js'))
         .pipe uglify()
-        .pipe sourcemaps.write()
         .pipe rename extname: '.min.js'
+        .pipe sourcemaps.write '.'
         .pipe gulp.dest 'build/js'
 
 

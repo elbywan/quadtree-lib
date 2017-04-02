@@ -14,10 +14,11 @@
 		<img alt="npm version" src="https://badge.fury.io/js/quadtree-lib.svg"/>
 	</a>
 </h1>
-
-Quadtree-lib is an easy to use, developer friendly quadtree library which
-contains many helper methods to add, remove, iterate, filter, simulate
-collisions over 2d elements and more.
+<h4 align="center">
+	Quadtree-lib is an easy to use, developer friendly quadtree library which
+	contains many helper methods to add, remove, iterate, filter, simulate
+	collisions over 2d elements and more.
+</h4>
 
 If you are already familiar with quadtrees, then you should perfectly understand
 how to use this library.

@@ -1,8 +1,19 @@
-# | quadtree-lib | [![Build Status](https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master)](https://travis-ci.org/elbywan/quadtree-lib) | [![Coverage Status](https://coveralls.io/repos/github/elbywan/quadtree-lib/badge.svg?branch=master)](https://coveralls.io/github/elbywan/quadtree-lib?branch=master) | [![npm version](https://badge.fury.io/js/quadtree-lib.svg)](https://www.npmjs.com/package/quadtree-lib)
-
-<a href="http://elbywan.github.io/quadtree-lib/demo/collisions/collisions.html" target="_blank">
-    <img alt="quatree gif" src="http://elbywan.github.io/quadtree-lib/assets/quadtree.gif" width="150px" align="left" style="margin-right: 25px"/>
-</a>
+<h1 align="center">
+    quadtree-lib<br>
+	<br>
+	<a href="http://elbywan.github.io/quadtree-lib/demo/collisions/collisions.html" target="_blank">
+		<img alt="quatree gif" src="http://elbywan.github.io/quadtree-lib/assets/quadtree.gif" width="120px"/>
+	</a><br>
+	<a href="https://travis-ci.org/elbywan/quadtree-lib" target="_blank" style="margin-right: 10px">
+		<img alt="Build Status" src="https://travis-ci.org/elbywan/quadtree-lib.svg?branch=master"/>
+	</a>
+	<a href="https://coveralls.io/github/elbywan/quadtree-lib?branch=master" target="_blank" style="margin-right: 10px">
+		<img alt="Coverage Status" src="https://coveralls.io/repos/github/elbywan/quadtree-lib/badge.svg?branch=master"/>
+	</a>
+	<a href="https://www.npmjs.com/package/quadtree-lib" target="_blank">
+		<img alt="npm version" src="https://badge.fury.io/js/quadtree-lib.svg"/>
+	</a>
+</h1>
 
 Quadtree-lib is an easy to use, developer friendly quadtree library which
 contains many helper methods to add, remove, iterate, filter, simulate

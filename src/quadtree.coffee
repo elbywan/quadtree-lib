@@ -13,7 +13,7 @@
         module.exports = factory()
     else
         root["Quadtree"] = factory()
-) @, (() -> class Quadtree
+) @, (-> class Quadtree
     # The Quadtree class
     # -------------------
 
@@ -44,7 +44,7 @@
         @children = {
             # Northwest tree.
             "NW":
-                create: () ->
+                create: ->
                     new Quadtree({
                         x: that.x
                         y: that.y
@@ -55,7 +55,7 @@
                 tree: null
             # Northeast tree.
             "NE":
-                create: () ->
+                create: ->
                     new Quadtree({
                         x: that.x + Math.max (Math.floor that.width / 2), 1
                         y: that.y
@@ -66,7 +66,7 @@
                 tree: null
             # Southwest tree.
             "SW":
-                create: () ->
+                create: ->
                     new Quadtree({
                         x: that.x
                         y: that.y + Math.max (Math.floor that.height / 2), 1
@@ -77,7 +77,7 @@
                 tree: null
             # Southeast tree.
             "SE":
-                create: () ->
+                create: ->
                     new Quadtree({
                         x: that.x + Math.max (Math.floor that.width / 2), 1
                         y: that.y + Math.max (Math.floor that.height / 2), 1
@@ -89,7 +89,7 @@
         }
         # Adding a getter which lazily creates the tree.
         for child of @children
-            @children[child].get = () ->
+            @children[child].get = ->
                 if @tree? then @tree else @tree = @create(); @tree
 
     # ### Internal methods & vars
@@ -99,12 +99,12 @@
         x: Math.floor((item.width  ? 1) / 2) + item.x
         y: Math.floor((item.height ? 1) / 2) + item.y
 
-    # Validates a potential element of the tree.
-    validateElement = (element) ->
-        if not typeof element is "object" or not element.x? or not element.y? or element.x < 0 or element.y < 0
-            throw new Error "Object must contain x or y positions as arguments, and they must be positive integers."
-        if element?.width < 0 or element?.height < 0
-            throw new Error "Width and height must be positive integers."
+    # Bounding box collision algorithm.
+    boundingBoxCollision = (elt1, elt2) ->
+        not(elt1.x >= elt2.x + (elt2.width ? 1)      or
+            elt1.x + (elt1.width ? 1) <= elt2.x      or
+            elt1.y >= elt2.y + (elt2.height ? 1)     or
+            elt1.y + (elt1.height ? 1) <= elt2.y)
 
     # Determines which subtree an element belongs to.
     calculateDirection = (element, tree) ->
@@ -117,13 +117,48 @@
             if element.y < quadCenter.y then "NE"
             else "SE"
 
-    # Determines if an element is oversized.
-    # An oversized element is an element 'too big' to fit into the tree.
-    isOversized = (element, tree) ->
-        element.x < tree.x or
-        element.x + (element.width ? 0) >= tree.x + tree.width or
-        element.y < tree.y or
-        element.y + (element.height ? 0) >= tree.y + tree.height
+    # Validates a potential element of the tree.
+    validateElement = (element) ->
+        if not (typeof element is "object")
+            throw new Error "Element must be an Object."
+        if not element.x? or not element.y?
+            throw new Error "Coordinates properties are missing."
+        if element?.width < 0 or element?.height < 0
+            throw new Error "Width and height must be positive integers."
+
+    # Returns splitted coordinates and dimensions.
+    splitTree = (tree) ->
+        leftWidth    = Math.max (Math.floor tree.width / 2), 1
+        rightWidth   = Math.ceil tree.width / 2
+        topHeight    = Math.max (Math.floor tree.height / 2), 1
+        bottomHeight = Math.ceil tree.height / 2
+        "NW":
+            x: tree.x
+            y: tree.y
+            width:  leftWidth
+            height: topHeight
+        "NE":
+            x: tree.x + leftWidth
+            y: tree.y
+            width:  rightWidth
+            height: topHeight
+        "SW":
+            x: tree.x
+            y: tree.y + topHeight
+            width:  leftWidth
+            height: bottomHeight
+        "SE":
+            x: tree.x + leftWidth
+            y: tree.y + topHeight
+            width:  rightWidth
+            height: bottomHeight
+
+    # Determines wether an element fits into subtrees.
+    fitting = (element, tree) ->
+        where = []
+        for direction, coordinates of splitTree tree when boundingBoxCollision element, coordinates
+            where.push direction
+        where
 
     # Add getters and setters for coordinates and dimensions properties in order to automatically reorganize the elements on change.
     observe = (item, tree) ->
@@ -159,30 +194,29 @@
         fifo = [tree: @, elements: items]
 
         while fifo.length > 0
-            top = fifo.shift()
-            tree = top.tree
-            elements = top.elements
+            { tree, elements } = fifo.shift()
 
             fifoCandidates = { "NW": null, "NE": null, "SW": null, "SE": null }
 
             for element in elements
                 tree.size++
 
-                direction = calculateDirection element, tree
-                relatedChild = tree.children[direction]
+                fits = fitting element, tree
 
-                if tree.width is 1 or tree.height is 1 or isOversized element, relatedChild.create()
+                if fits.length isnt 1 or tree.width is 1 or tree.height is 1
                     tree.oversized.push element
 
                 else if (tree.size - tree.oversized.length) <= tree.maxElements
                     tree.contents.push element
 
                 else
+                    direction = fits[0]
+                    relatedChild = tree.children[direction]
                     fifoCandidates[direction] ?= { tree: relatedChild.get(), elements: [] }
                     fifoCandidates[direction].elements.push(element)
 
                     for content in tree.contents
-                        contentDir = calculateDirection content, tree
+                        contentDir = (fitting content, tree)[0]
                         fifoCandidates[contentDir] ?= { tree: tree.children[contentDir].get(), elements: [] }
                         fifoCandidates[contentDir].elements.push(content)
 
@@ -202,6 +236,7 @@
             @oversized.splice index, 1
             @size--
             return true
+
         index = @contents.indexOf item
         if index > - 1
             @contents.splice index, 1
@@ -209,15 +244,13 @@
             return true
 
         relatedChild = @children[calculateDirection item, @]
-        if not relatedChild.tree?
-            return false
 
-        if relatedChild.tree.remove item
+        if relatedChild.tree? and relatedChild.tree.remove item
             @size--
             relatedChild.tree = null if relatedChild.tree.size is 0
-            true
-        else
-            false
+            return true
+
+        false
 
     # Returns an array of elements which collides with the `item` argument.
     # `item` being an object having x, y, width & height properties.
@@ -226,17 +259,11 @@
     # You can change it by providing a function as a second argument.
     #```javascript
     #colliding({x: 10, y: 20}, function(element1, element2){
-    #    return //Predicate
+    #    return // Place predicate here //
     #})
     #```
     colliding: (item, collisionFunction) ->
         validateElement item
-
-        boundingBoxCollision = (elt1, elt2) ->
-            not(elt1.x > elt2.x + (elt2.width ? 0)      or
-                elt1.x + (elt1.width ? 0) < elt2.x      or
-                elt1.y > elt2.y + (elt2.height ? 0)     or
-                elt1.y + (elt1.height ? 0) < elt2.y)
 
         collisionFunction ?= boundingBoxCollision
 
@@ -249,15 +276,20 @@
             for elt in top.oversized when elt isnt item and collisionFunction item, elt then items.push elt
             for elt in top.contents  when elt isnt item and collisionFunction item, elt then items.push elt
 
-            relatedChild = top.children[calculateDirection item, top]
+            fits = fitting item, top
 
-            if isOversized item, relatedChild.create()
-                for child of top.children
-                    if top.children[child].tree? and boundingBoxCollision(top.children[child].tree, item)
-                        fifo.push top.children[child].tree
+            # Special case for elements located outside of the quadtree on the right / bottom side
+            if fits.length is 0
+                fits = []
+                if item.x >= top.x + top.width
+                    fits.push "NE"
+                if item.y >= top.y + top.height
+                    fits.push "SW"
+                if fits.length > 0
+                    if fits.length is 1 then fits.push "SE" else fits = ["SE"]
 
-            else if relatedChild.tree?
-                fifo.push relatedChild.tree
+            for child in fits when top.children[child].tree?
+                fifo.push top.children[child].tree
 
         items
 
@@ -267,7 +299,7 @@
     # Returns an array of elements that match the `query` argument.
     where: (query) ->
         # Naïve parsing (missing coordinates)
-        if typeof query is "object" and not query.x? and not query.y?
+        if typeof query is "object" and (not query.x? or not query.y?)
             return @find (elt) ->
                 check = true
                 for key of query when query[key] isnt elt[key] then check = false
@@ -314,7 +346,7 @@
                 fifo.push top.children[child].tree
         @
 
-    # Returns an array of elements which validate the predicate.
+    # Returns an array of elements which validates the predicate.
     find: (predicate) ->
         fifo = [@]
         items = []
@@ -366,7 +398,7 @@
         @
 
     # Pretty printing function.
-    pretty: () ->
+    pretty: ->
         str = ""
 
         indent = (level) ->

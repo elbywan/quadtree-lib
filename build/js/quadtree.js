@@ -9,7 +9,7 @@
 })(this, (function() {
   var Quadtree;
   return Quadtree = (function() {
-    var calculateDirection, getCenter, isOversized, observe, validateElement;
+    var boundingBoxCollision, calculateDirection, fitting, getCenter, observe, splitTree, validateElement;
 
     function Quadtree(arg) {
       var child, that;
@@ -106,13 +106,9 @@
       };
     };
 
-    validateElement = function(element) {
-      if (!typeof element === "object" || (element.x == null) || (element.y == null) || element.x < 0 || element.y < 0) {
-        throw new Error("Object must contain x or y positions as arguments, and they must be positive integers.");
-      }
-      if ((element != null ? element.width : void 0) < 0 || (element != null ? element.height : void 0) < 0) {
-        throw new Error("Width and height must be positive integers.");
-      }
+    boundingBoxCollision = function(elt1, elt2) {
+      var ref, ref1, ref2, ref3;
+      return !(elt1.x >= elt2.x + ((ref = elt2.width) != null ? ref : 1) || elt1.x + ((ref1 = elt1.width) != null ? ref1 : 1) <= elt2.x || elt1.y >= elt2.y + ((ref2 = elt2.height) != null ? ref2 : 1) || elt1.y + ((ref3 = elt1.height) != null ? ref3 : 1) <= elt2.y);
     };
 
     calculateDirection = function(element, tree) {
@@ -133,9 +129,63 @@
       }
     };
 
-    isOversized = function(element, tree) {
-      var ref, ref1;
-      return element.x < tree.x || element.x + ((ref = element.width) != null ? ref : 0) >= tree.x + tree.width || element.y < tree.y || element.y + ((ref1 = element.height) != null ? ref1 : 0) >= tree.y + tree.height;
+    validateElement = function(element) {
+      if (!(typeof element === "object")) {
+        throw new Error("Element must be an Object.");
+      }
+      if ((element.x == null) || (element.y == null)) {
+        throw new Error("Coordinates properties are missing.");
+      }
+      if ((element != null ? element.width : void 0) < 0 || (element != null ? element.height : void 0) < 0) {
+        throw new Error("Width and height must be positive integers.");
+      }
+    };
+
+    splitTree = function(tree) {
+      var bottomHeight, leftWidth, rightWidth, topHeight;
+      leftWidth = Math.max(Math.floor(tree.width / 2), 1);
+      rightWidth = Math.ceil(tree.width / 2);
+      topHeight = Math.max(Math.floor(tree.height / 2), 1);
+      bottomHeight = Math.ceil(tree.height / 2);
+      return {
+        "NW": {
+          x: tree.x,
+          y: tree.y,
+          width: leftWidth,
+          height: topHeight
+        },
+        "NE": {
+          x: tree.x + leftWidth,
+          y: tree.y,
+          width: rightWidth,
+          height: topHeight
+        },
+        "SW": {
+          x: tree.x,
+          y: tree.y + topHeight,
+          width: leftWidth,
+          height: bottomHeight
+        },
+        "SE": {
+          x: tree.x + leftWidth,
+          y: tree.y + topHeight,
+          width: rightWidth,
+          height: bottomHeight
+        }
+      };
+    };
+
+    fitting = function(element, tree) {
+      var coordinates, direction, ref, where;
+      where = [];
+      ref = splitTree(tree);
+      for (direction in ref) {
+        coordinates = ref[direction];
+        if (boundingBoxCollision(element, coordinates)) {
+          where.push(direction);
+        }
+      }
+      return where;
     };
 
     observe = function(item, tree) {
@@ -165,7 +215,7 @@
     };
 
     Quadtree.prototype.pushAll = function(items, doObserve) {
-      var candidate, content, contentDir, direction, element, elements, fifo, fifoCandidates, item, j, k, l, len, len1, len2, ref, relatedChild, top, tree;
+      var candidate, content, contentDir, direction, element, elements, fifo, fifoCandidates, fits, item, j, k, l, len, len1, len2, ref, ref1, relatedChild, tree;
       for (j = 0, len = items.length; j < len; j++) {
         item = items[j];
         validateElement(item);
@@ -180,9 +230,7 @@
         }
       ];
       while (fifo.length > 0) {
-        top = fifo.shift();
-        tree = top.tree;
-        elements = top.elements;
+        ref = fifo.shift(), tree = ref.tree, elements = ref.elements;
         fifoCandidates = {
           "NW": null,
           "NE": null,
@@ -192,13 +240,14 @@
         for (k = 0, len1 = elements.length; k < len1; k++) {
           element = elements[k];
           tree.size++;
-          direction = calculateDirection(element, tree);
-          relatedChild = tree.children[direction];
-          if (tree.width === 1 || tree.height === 1 || isOversized(element, relatedChild.create())) {
+          fits = fitting(element, tree);
+          if (fits.length !== 1 || tree.width === 1 || tree.height === 1) {
             tree.oversized.push(element);
           } else if ((tree.size - tree.oversized.length) <= tree.maxElements) {
             tree.contents.push(element);
           } else {
+            direction = fits[0];
+            relatedChild = tree.children[direction];
             if (fifoCandidates[direction] == null) {
               fifoCandidates[direction] = {
                 tree: relatedChild.get(),
@@ -206,10 +255,10 @@
               };
             }
             fifoCandidates[direction].elements.push(element);
-            ref = tree.contents;
-            for (l = 0, len2 = ref.length; l < len2; l++) {
-              content = ref[l];
-              contentDir = calculateDirection(content, tree);
+            ref1 = tree.contents;
+            for (l = 0, len2 = ref1.length; l < len2; l++) {
+              content = ref1[l];
+              contentDir = (fitting(content, tree))[0];
               if (fifoCandidates[contentDir] == null) {
                 fifoCandidates[contentDir] = {
                   tree: tree.children[contentDir].get(),
@@ -247,27 +296,19 @@
         return true;
       }
       relatedChild = this.children[calculateDirection(item, this)];
-      if (relatedChild.tree == null) {
-        return false;
-      }
-      if (relatedChild.tree.remove(item)) {
+      if ((relatedChild.tree != null) && relatedChild.tree.remove(item)) {
         this.size--;
         if (relatedChild.tree.size === 0) {
           relatedChild.tree = null;
         }
         return true;
-      } else {
-        return false;
       }
+      return false;
     };
 
     Quadtree.prototype.colliding = function(item, collisionFunction) {
-      var boundingBoxCollision, child, elt, fifo, items, j, k, len, len1, ref, ref1, relatedChild, top;
+      var child, elt, fifo, fits, items, j, k, l, len, len1, len2, ref, ref1, top;
       validateElement(item);
-      boundingBoxCollision = function(elt1, elt2) {
-        var ref, ref1, ref2, ref3;
-        return !(elt1.x > elt2.x + ((ref = elt2.width) != null ? ref : 0) || elt1.x + ((ref1 = elt1.width) != null ? ref1 : 0) < elt2.x || elt1.y > elt2.y + ((ref2 = elt2.height) != null ? ref2 : 0) || elt1.y + ((ref3 = elt1.height) != null ? ref3 : 0) < elt2.y);
-      };
       if (collisionFunction == null) {
         collisionFunction = boundingBoxCollision;
       }
@@ -289,15 +330,28 @@
             items.push(elt);
           }
         }
-        relatedChild = top.children[calculateDirection(item, top)];
-        if (isOversized(item, relatedChild.create())) {
-          for (child in top.children) {
-            if ((top.children[child].tree != null) && boundingBoxCollision(top.children[child].tree, item)) {
-              fifo.push(top.children[child].tree);
+        fits = fitting(item, top);
+        if (fits.length === 0) {
+          fits = [];
+          if (item.x >= top.x + top.width) {
+            fits.push("NE");
+          }
+          if (item.y >= top.y + top.height) {
+            fits.push("SW");
+          }
+          if (fits.length > 0) {
+            if (fits.length === 1) {
+              fits.push("SE");
+            } else {
+              fits = ["SE"];
             }
           }
-        } else if (relatedChild.tree != null) {
-          fifo.push(relatedChild.tree);
+        }
+        for (l = 0, len2 = fits.length; l < len2; l++) {
+          child = fits[l];
+          if (top.children[child].tree != null) {
+            fifo.push(top.children[child].tree);
+          }
         }
       }
       return items;
@@ -309,7 +363,7 @@
 
     Quadtree.prototype.where = function(query) {
       var check, elt, fifo, items, j, k, key, len, len1, ref, ref1, relatedChild, top;
-      if (typeof query === "object" && (query.x == null) && (query.y == null)) {
+      if (typeof query === "object" && ((query.x == null) || (query.y == null))) {
         return this.find(function(elt) {
           var check, key;
           check = true;

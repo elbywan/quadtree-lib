@@ -39,7 +39,7 @@ From the command line :
 
 `npm install quadtree-lib` or `yarn add quadtree-lib`
 
-### Using Bower
+### Using bower
 
 `bower install quadtree-lib`
 
@@ -114,7 +114,7 @@ import * as Quadtree from "quadtree-lib"
 
 Elements must be objects, with coordinates set.
 
-Optionally, you can pass a boolean argument which, if set to True, will
+Optionally, you can pass a boolean argument which, if set to `true`, will
 remove/push the object into the quadtree each time its coordinates or dimensions
 are set *(ex: item.x = ... or item.width = ...)*.
 
@@ -138,7 +138,6 @@ quadtree.pushAll([
     {x: 2, y: 2}
     // ... //
 ])
-
 ```
 
 ### Removing elements
@@ -183,7 +182,7 @@ var colliding = quadtree.colliding({
     x: 10,
     y: 10
 }, function(element1, element2){
-    return //Place collision algorithm here
+    return // Place collision algorithm here //
 })
 
 ```

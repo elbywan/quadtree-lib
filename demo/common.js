@@ -49,15 +49,24 @@ var drawQuadtree = function(tree, fill, context) {
 }
 
 var makeMovable = function(element, boundaryElement, callbacks) {
+    var extractPos = function(event) {
+        return {
+            x: event.clientX ? event.clientX : event.changedTouches[0].clientX,
+            y: event.clientY ? event.clientY : event.changedTouches[0].clientY
+        }
+    }
+
     var resizeAction = function(event) {
         var targetRect = element.getBoundingClientRect()
+        var position = extractPos(event)
+
         if(boundaryElement) {
             var boundaries = boundaryElement.getBoundingClientRect()
-            element.style.height = Math.max(5, Math.min(event.clientY - targetRect.top,  boundaries.bottom - targetRect.top))
-            element.style.width  = Math.max(5, Math.min(event.clientX - targetRect.left, boundaries.right  - targetRect.left))
+            element.style.height = Math.max(5, Math.min(position.y - targetRect.top,  boundaries.bottom - targetRect.top))
+            element.style.width  = Math.max(5, Math.min(position.x - targetRect.left, boundaries.right  - targetRect.left))
         } else {
-            element.style.height = Math.max(5, event.clientY - targetRect.top)
-            element.style.width  = Math.max(5, event.clientX - targetRect.left)
+            element.style.height = Math.max(5, position.y - targetRect.top)
+            element.style.width  = Math.max(5, position.x - targetRect.left)
         }
 
         if(callbacks && callbacks.onResize && typeof callbacks.onResize === "function") {
@@ -65,25 +74,41 @@ var makeMovable = function(element, boundaryElement, callbacks) {
         }
     }
     var lastMovePos = null
+    var clickAction = function(event) {
+        var targetRect = element.getBoundingClientRect()
+        var position = extractPos(event)
+
+        if(Math.abs(position.y - targetRect.bottom) < 12 && Math.abs(position.x - targetRect.right < 12)) {
+            document.getElementsByTagName('body')[0].addEventListener('mousemove', resizeAction)
+            document.getElementsByTagName('body')[0].addEventListener('touchmove', resizeAction)
+        } else {
+            document.getElementsByTagName('body')[0].addEventListener('mousemove', moveAction)
+            document.getElementsByTagName('body')[0].addEventListener('touchmove', moveAction)
+            lastMovePos = {x: position.x, y: position.y}
+        }
+        event.preventDefault()
+    }
     var moveAction = function(event) {
+        var position = extractPos(event)
+
         if(boundaryElement && boundaryElement.contains(event.target)) {
             var boundaries = boundaryElement.getBoundingClientRect()
 
-            element.style.top  = parseInt(getComputedStyle(element).top)  + event.clientY - lastMovePos.y
-            element.style.left = parseInt(getComputedStyle(element).left) + event.clientX - lastMovePos.x
+            element.style.top  = parseInt(getComputedStyle(element).top)  + position.y - lastMovePos.y
+            element.style.left = parseInt(getComputedStyle(element).left) + position.x - lastMovePos.x
             element.style.top  = Math.max(0, Math.min(parseInt(element.style.top),  boundaries.height - parseInt(getComputedStyle(element).height)))
             element.style.left = Math.max(0, Math.min(parseInt(element.style.left), boundaries.width  - parseInt(getComputedStyle(element).width)))
 
-            lastMovePos = {x: event.clientX, y: event.clientY}
+            lastMovePos = {x: position.x, y: position.y}
 
             if(callbacks && callbacks.onMove && typeof callbacks.onMove === "function") {
                 callbacks.onMove()
             }
         } else if(!boundaryElement) {
-            element.style.top  = parseInt(getComputedStyle(element).top)  + event.clientY - lastMovePos.y
-            element.style.left = parseInt(getComputedStyle(element).left) + event.clientX - lastMovePos.x
+            element.style.top  = parseInt(getComputedStyle(element).top)  + position.y - lastMovePos.y
+            element.style.left = parseInt(getComputedStyle(element).left) + position.x - lastMovePos.x
 
-            lastMovePos = {x: event.clientX, y: event.clientY}
+            lastMovePos = {x: position.x, y: position.y}
 
             if(callbacks && callbacks.onMove && typeof callbacks.onMove === "function") {
                 callbacks.onMove()
@@ -91,18 +116,16 @@ var makeMovable = function(element, boundaryElement, callbacks) {
         }
     }
 
-    element.addEventListener('mousedown', function(event) {
-        var targetRect = element.getBoundingClientRect()
-        if(Math.abs(event.clientY - targetRect.bottom) < 12 && Math.abs(event.clientX - targetRect.right < 12))
-            document.getElementsByTagName('body')[0].addEventListener('mousemove', resizeAction)
-        else {
-            document.getElementsByTagName('body')[0].addEventListener('mousemove', moveAction)
-            lastMovePos = {x: event.clientX, y: event.clientY}
-        }
-    })
+    element.addEventListener('mousedown',  clickAction)
+    element.addEventListener('touchstart', clickAction)
 
     document.getElementsByTagName('body')[0].addEventListener('mouseup', function(event) {
         document.getElementsByTagName('body')[0].removeEventListener('mousemove', resizeAction)
         document.getElementsByTagName('body')[0].removeEventListener('mousemove', moveAction)
     })
+    document.getElementsByTagName('body')[0].addEventListener('touchend', function(event) {
+        document.getElementsByTagName('body')[0].removeEventListener('touchmove', resizeAction)
+        document.getElementsByTagName('body')[0].removeEventListener('touchmove', moveAction)
+    })
+
 }

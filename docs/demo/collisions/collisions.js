@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 var init = function(){
     canvas.width = width
     canvas.height = height
+    container.style.height = height+"px"
     ctx.clearRect(0, 0, width, height)
     ctx.lineWidth = 1
     layer.width = width

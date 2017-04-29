@@ -87,7 +87,8 @@ collisions over 2d elements and more.</p>
         <p>Dimension &amp; coordinates are checked, an error is thrown in case of bad input.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Dimensions and coordinates must be positive integers."</span> <span class="hljs-keyword">if</span> @x &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> @y &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> @width &lt; <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> @height &lt; <span class="hljs-number">1</span>
+          <div class='highlight'><pre>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Dimensions must be positive integers."</span> <span class="hljs-keyword">if</span> @width &lt; <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> @height &lt; <span class="hljs-number">1</span>
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Coordinates must be integers"</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> Number.isInteger(@x) <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> Number.isInteger(@y)
         <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error <span class="hljs-string">"The maximum number of elements before a split must be a positive integer."</span> <span class="hljs-keyword">if</span> @maxElements &lt; <span class="hljs-number">1</span>
 
         that = @</pre></div>

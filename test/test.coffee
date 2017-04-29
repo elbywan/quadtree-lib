@@ -12,10 +12,9 @@ describe 'quadtree', ->
         assert.throws (-> new Quadtree x:1,  y:1), Error
         assert.throws (-> new Quadtree x:1,  y:1,  width:10), Error
         assert.throws (-> new Quadtree x:1,  y:1,  height:10), Error
-        assert.throws (-> new Quadtree x:-1, y:1,  width:10, height: 10), Error
-        assert.throws (-> new Quadtree x:1,  y:-1, width:10, height: 10), Error
         assert.throws (-> new Quadtree x:1,  y:1,  width:0,  height: 10), Error
         assert.throws (-> new Quadtree x:1,  y:1,  width:10, height: -1), Error
+        assert.throws (-> new Quadtree x:{}, y:1,  width:10, height: 10), Error
         assert.throws (-> new Quadtree x:1,  y:1,  width:10, height: 10, maxElements: -1), Error
 
     it 'should reject improper elements', ->
@@ -29,7 +28,7 @@ describe 'quadtree', ->
         assert.throws (-> quadtree.push x:1, y:0, height: -1), Error
 
     it 'should add a fitting element properly', ->
-        quadtree = new Quadtree width: 100, height: 100
+        quadtree = new Quadtree x: -10, y: -10, width: 20, height: 20
         quadtree.push element = x: 0, y: 0, content: 'element 0'
         assert.equal quadtree.size, 1
         assert.equal quadtree.contents[0], element

@@ -35,7 +35,8 @@
         @size = 0
 
         # Dimension & coordinates are checked, an error is thrown in case of bad input.
-        throw new Error "Dimensions and coordinates must be positive integers." if @x < 0 or @y < 0 or @width < 1 or @height < 1
+        throw new Error "Dimensions must be positive integers." if @width < 1 or @height < 1
+        throw new Error "Coordinates must be integers" if not Number.isInteger(@x) or not Number.isInteger(@y)
         throw new Error "The maximum number of elements before a split must be a positive integer." if @maxElements < 1
 
         that = @

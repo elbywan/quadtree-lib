@@ -29,8 +29,11 @@
       this.contents = [];
       this.oversized = [];
       this.size = 0;
-      if (this.x < 0 || this.y < 0 || this.width < 1 || this.height < 1) {
-        throw new Error("Dimensions and coordinates must be positive integers.");
+      if (this.width < 1 || this.height < 1) {
+        throw new Error("Dimensions must be positive integers.");
+      }
+      if (!Number.isInteger(this.x) || !Number.isInteger(this.y)) {
+        throw new Error("Coordinates must be integers");
       }
       if (this.maxElements < 1) {
         throw new Error("The maximum number of elements before a split must be a positive integer.");

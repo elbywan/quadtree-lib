@@ -1,5 +1,12 @@
 # Change log - quadtree-lib
 
+## [1.0.6](https://github.com/elbywan/quadtree-lib/compare/1.0.5...1.0.6)
+
+##### Added
+
+- [Add changelog](https://github.com/elbywan/quadtree-lib/commit/a126c8e38f42174237b6ebaa5c7b85e42ed1706a)
+- [[Feature] Allow negative quadtree coordinates](https://github.com/elbywan/quadtree-lib/commit/18fcec76d68c1b05c55672b6767682ce4103ded6)
+
 ## [1.0.5](https://github.com/elbywan/quadtree-lib/compare/1.0.4...1.0.5)
 
 ##### Added

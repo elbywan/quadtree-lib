@@ -1,5 +1,11 @@
 # Change log - quadtree-lib
 
+## HEAD
+
+##### Added
+
+- Coffeescript linter (http://www.coffeelint.org/)
+
 ## [1.0.6](https://github.com/elbywan/quadtree-lib/compare/1.0.5...1.0.6)
 
 ##### Added

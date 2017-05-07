@@ -1,5 +1,5 @@
-assert = require "assert"
-Quadtree = require "../build/js/quadtree"
+assert = require 'assert'
+Quadtree = require '../build/js/quadtree'
 
 randomNb = (min, max) ->
     throw new Error 'min must be < max' if min >= max
@@ -9,23 +9,23 @@ describe 'quadtree', ->
 
     it 'should reject bad or missing arguments on quadtree init.', ->
         assert.throws (-> new Quadtree), Error
-        assert.throws (-> new Quadtree x:1,  y:1), Error
-        assert.throws (-> new Quadtree x:1,  y:1,  width:10), Error
-        assert.throws (-> new Quadtree x:1,  y:1,  height:10), Error
-        assert.throws (-> new Quadtree x:1,  y:1,  width:0,  height: 10), Error
-        assert.throws (-> new Quadtree x:1,  y:1,  width:10, height: -1), Error
-        assert.throws (-> new Quadtree x:{}, y:1,  width:10, height: 10), Error
-        assert.throws (-> new Quadtree x:1,  y:1,  width:10, height: 10, maxElements: -1), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1,  width: 10), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1,  height: 10), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1,  width: 0,  height: 10), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1,  width: 10, height: -1), Error
+        assert.throws (-> new Quadtree x: {}, y: 1,  width: 10, height: 10), Error
+        assert.throws (-> new Quadtree x: 1,  y: 1,  width: 10, height: 10, maxElements: -1), Error
 
     it 'should reject improper elements', ->
         quadtree = new Quadtree width: 100, height: 100
         assert.throws (-> quadtree.push()), Error
-        assert.throws (-> quadtree.push "string"), Error
+        assert.throws (-> quadtree.push 'string'), Error
         assert.throws (-> quadtree.push 10), Error
-        assert.throws (-> quadtree.push x:1), Error
-        assert.throws (-> quadtree.push y:1), Error
-        assert.throws (-> quadtree.push x:1, y:0, width:  -1), Error
-        assert.throws (-> quadtree.push x:1, y:0, height: -1), Error
+        assert.throws (-> quadtree.push x: 1), Error
+        assert.throws (-> quadtree.push y: 1), Error
+        assert.throws (-> quadtree.push x: 1, y: 0, width: -1), Error
+        assert.throws (-> quadtree.push x: 1, y: 0, height: -1), Error
 
     it 'should add a fitting element properly', ->
         quadtree = new Quadtree x: -10, y: -10, width: 20, height: 20
@@ -54,25 +54,25 @@ describe 'quadtree', ->
     it 'should detect colliding elements', ->
         quadtree = new Quadtree width: 100, height: 100
         quadtree.pushAll [
-            element0 =  x: 75, y: 80, width: 10, height: 10,
-            element1 =  x: 80, y: 85, width: 15, height: 10,
-            element2 =  x: 10, y: 15, width: 5,  height: 5,
-            element3 =  x: 12, y: 19, width: 5,  height: 5,
-            element4 =  x: 5,  y: 5,
-            element5 =  x: 49, y: 49, width: 2, height : 2,
-            element6 =  x: 50, y: 49, width: 1, height : 1,
-            element7 =  x: 49, y: 50, width: 1, height : 1,
-            element8 =  x: 50, y: 50, width: 1, height : 1,
-            element9 =  x: 98, y: 98,
-            element10 = x: 98, y: 98,
-            element11 = x: 0,  y: 0,
-            element12 = x: -2, y: -2,  width: 5, height: 5,
-            element13 = x: 105,y: 105,
-            element14 = x: 99, y: 99, width: 10, height: 10,
-            element15 = x: 105,y: 55,
-            element16 = x: 99, y: 55, width: 10, height: 10,
-            element17 = x: 55, y: 105,
-            element18 = x: 55, y: 99, width: 10, height: 10]
+            element0 =  x: 75,  y: 80, width: 10, height: 10,
+            element1 =  x: 80,  y: 85, width: 15, height: 10,
+            element2 =  x: 10,  y: 15, width: 5,  height: 5,
+            element3 =  x: 12,  y: 19, width: 5,  height: 5,
+            element4 =  x: 5,   y: 5,
+            element5 =  x: 49,  y: 49, width: 2, height: 2,
+            element6 =  x: 50,  y: 49, width: 1, height: 1,
+            element7 =  x: 49,  y: 50, width: 1, height: 1,
+            element8 =  x: 50,  y: 50, width: 1, height: 1,
+            element9 =  x: 98,  y: 98,
+            element10 = x: 98,  y: 98,
+            element11 = x: 0,   y: 0,
+            element12 = x: -2,  y: -2, width: 5, height: 5,
+            element13 = x: 105, y: 105,
+            element14 = x: 99,  y: 99, width: 10, height: 10,
+            element15 = x: 105, y: 55,
+            element16 = x: 99,  y: 55, width: 10, height: 10,
+            element17 = x: 55,  y: 105,
+            element18 = x: 55,  y: 99, width: 10, height: 10]
 
         assert.equal quadtree.size, 19
         assert.equal (quadtree.colliding element0)[0], element1
@@ -224,8 +224,8 @@ describe 'quadtree', ->
         quadtree.pushAll elementArray
         quadtree2.pushAll elementArray
 
-        assert.equal quadtree.children["NW"].tree.contents.length, 0
-        assert.equal quadtree2.children["NW"].tree.contents.length, 2
+        assert.equal quadtree.children['NW'].tree.contents.length, 0
+        assert.equal quadtree2.children['NW'].tree.contents.length, 2
 
     it 'should update the quadtree if an element dimensions or position is manually updated', ->
         quadtree  = new Quadtree width: 100, height: 100
@@ -239,21 +239,21 @@ describe 'quadtree', ->
             quadtree.push element, true
 
         assert.equal quadtree.size, 3
-        assert.equal quadtree.children["NW"].tree.size, 3
+        assert.equal quadtree.children['NW'].tree.size, 3
         assert.equal quadtree.oversized.indexOf(element0), -1
 
         element0.x = 70
 
         assert.equal quadtree.size, 3
-        assert.equal quadtree.children["NW"].tree.size, 2
-        assert.equal quadtree.children["NE"].tree.size, 1
+        assert.equal quadtree.children['NW'].tree.size, 2
+        assert.equal quadtree.children['NE'].tree.size, 1
         assert.equal quadtree.oversized.indexOf(element0), -1
 
         element0.y = 70
 
         assert.equal quadtree.size, 3
-        assert.equal quadtree.children["NW"].tree.size, 2
-        assert.equal quadtree.children["SE"].tree.size, 1
+        assert.equal quadtree.children['NW'].tree.size, 2
+        assert.equal quadtree.children['SE'].tree.size, 1
         assert.equal quadtree.oversized.indexOf(element0), -1
 
         element0.x = 0
@@ -262,7 +262,7 @@ describe 'quadtree', ->
         element0.height = 60
 
         assert.equal quadtree.size, 3
-        assert.equal quadtree.children["NW"].tree.size, 2
+        assert.equal quadtree.children['NW'].tree.size, 2
         assert.equal quadtree.oversized.indexOf(element0), 0
 
     it 'should get an element by any property', ->
@@ -282,21 +282,21 @@ describe 'quadtree', ->
     it 'should pretty print the quadtree', ->
         quadtree = new Quadtree width: 20, height: 20, maxElements: 2
         elementArray = [
-            element0 = {x: 0,  y: 0,  toString: -> 0},
-            element1 = {x: 2,  y: 2,  toString: -> 1},
-            element2 = {x: 4,  y: 4,  toString: -> 2},
-            element3 = {x: 6,  y: 6,  toString: -> 3},
-            element4 = {x: 8,  y: 8,  toString: -> 4},
-            element5 = {x: 10, y: 8,  toString: -> 5},
-            element6 = {x: 12, y: 12, toString: -> 6},
-            element7 = {x: 8,  y: 14, toString: -> 7},
-            element8 = {x: 6,  y: 16, toString: -> 8},
-            element9 = {x: 18, y: 18, toString: -> 9}
-            bigElement = {x: 10, y: 10, width: 6, height: 6, toString: -> "[BIG]"}
+            element0 = x: 0,  y: 0,  toString: -> 0,
+            element1 = x: 2,  y: 2,  toString: -> 1,
+            element2 = x: 4,  y: 4,  toString: -> 2,
+            element3 = x: 6,  y: 6,  toString: -> 3,
+            element4 = x: 8,  y: 8,  toString: -> 4,
+            element5 = x: 10, y: 8,  toString: -> 5,
+            element6 = x: 12, y: 12, toString: -> 6,
+            element7 = x: 8,  y: 14, toString: -> 7,
+            element8 = x: 6,  y: 16, toString: -> 8,
+            element9 = x: 18, y: 18, toString: -> 9
+            bigElement = x: 10, y: 10, width: 6, height: 6, toString: -> '[BIG]'
         ]
         quadtree.pushAll elementArray
 
-        fixedOutput =  """
+        fixedOutput =  '''
                        | ROOT
                        | ------------
                        └──┐
@@ -332,5 +332,5 @@ describe 'quadtree', ->
                                 | ------------
                                 | * Leaf content *
                                 |   0\n
-                                """
+                                '''
         assert.equal(quadtree.pretty(), fixedOutput)

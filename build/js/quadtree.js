@@ -4,7 +4,7 @@
   } else if (typeof exports === 'object' && module.exports) {
     return module.exports = factory();
   } else {
-    return root["Quadtree"] = factory();
+    return root['Quadtree'] = factory();
   }
 })(this, (function() {
   var Quadtree;
@@ -15,7 +15,7 @@
       var child, that;
       this.x = arg.x, this.y = arg.y, this.width = arg.width, this.height = arg.height, this.maxElements = arg.maxElements;
       if ((this.width == null) || (this.height == null)) {
-        throw new Error("Missing quadtree dimensions.");
+        throw new Error('Missing quadtree dimensions.');
       }
       if (this.x == null) {
         this.x = 0;
@@ -30,17 +30,17 @@
       this.oversized = [];
       this.size = 0;
       if (this.width < 1 || this.height < 1) {
-        throw new Error("Dimensions must be positive integers.");
+        throw new Error('Dimensions must be positive integers.');
       }
       if (!Number.isInteger(this.x) || !Number.isInteger(this.y)) {
-        throw new Error("Coordinates must be integers");
+        throw new Error('Coordinates must be integers');
       }
       if (this.maxElements < 1) {
-        throw new Error("The maximum number of elements before a split must be a positive integer.");
+        throw new Error('The maximum number of elements before a split must be a positive integer.');
       }
       that = this;
       this.children = {
-        "NW": {
+        NW: {
           create: function() {
             return new Quadtree({
               x: that.x,
@@ -52,7 +52,7 @@
           },
           tree: null
         },
-        "NE": {
+        NE: {
           create: function() {
             return new Quadtree({
               x: that.x + Math.max(Math.floor(that.width / 2), 1),
@@ -64,7 +64,7 @@
           },
           tree: null
         },
-        "SW": {
+        SW: {
           create: function() {
             return new Quadtree({
               x: that.x,
@@ -76,7 +76,7 @@
           },
           tree: null
         },
-        "SE": {
+        SE: {
           create: function() {
             return new Quadtree({
               x: that.x + Math.max(Math.floor(that.width / 2), 1),
@@ -119,28 +119,28 @@
       quadCenter = getCenter(tree);
       if (element.x < quadCenter.x) {
         if (element.y < quadCenter.y) {
-          return "NW";
+          return 'NW';
         } else {
-          return "SW";
+          return 'SW';
         }
       } else {
         if (element.y < quadCenter.y) {
-          return "NE";
+          return 'NE';
         } else {
-          return "SE";
+          return 'SE';
         }
       }
     };
 
     validateElement = function(element) {
-      if (!(typeof element === "object")) {
-        throw new Error("Element must be an Object.");
+      if (!(typeof element === 'object')) {
+        throw new Error('Element must be an Object.');
       }
       if ((element.x == null) || (element.y == null)) {
-        throw new Error("Coordinates properties are missing.");
+        throw new Error('Coordinates properties are missing.');
       }
       if ((element != null ? element.width : void 0) < 0 || (element != null ? element.height : void 0) < 0) {
-        throw new Error("Width and height must be positive integers.");
+        throw new Error('Width and height must be positive integers.');
       }
     };
 
@@ -151,25 +151,25 @@
       topHeight = Math.max(Math.floor(tree.height / 2), 1);
       bottomHeight = Math.ceil(tree.height / 2);
       return {
-        "NW": {
+        NW: {
           x: tree.x,
           y: tree.y,
           width: leftWidth,
           height: topHeight
         },
-        "NE": {
+        NE: {
           x: tree.x + leftWidth,
           y: tree.y,
           width: rightWidth,
           height: topHeight
         },
-        "SW": {
+        SW: {
           x: tree.x,
           y: tree.y + topHeight,
           width: leftWidth,
           height: bottomHeight
         },
-        "SE": {
+        SE: {
           x: tree.x + leftWidth,
           y: tree.y + topHeight,
           width: rightWidth,
@@ -207,10 +207,10 @@
           configurable: true
         });
       };
-      writeAccessors("x");
-      writeAccessors("y");
-      writeAccessors("width");
-      return writeAccessors("height");
+      writeAccessors('x');
+      writeAccessors('y');
+      writeAccessors('width');
+      return writeAccessors('height');
     };
 
     Quadtree.prototype.push = function(item, doObserve) {
@@ -235,10 +235,10 @@
       while (fifo.length > 0) {
         ref = fifo.shift(), tree = ref.tree, elements = ref.elements;
         fifoCandidates = {
-          "NW": null,
-          "NE": null,
-          "SW": null,
-          "SE": null
+          NW: null,
+          NE: null,
+          SW: null,
+          SE: null
         };
         for (k = 0, len1 = elements.length; k < len1; k++) {
           element = elements[k];
@@ -337,16 +337,16 @@
         if (fits.length === 0) {
           fits = [];
           if (item.x >= top.x + top.width) {
-            fits.push("NE");
+            fits.push('NE');
           }
           if (item.y >= top.y + top.height) {
-            fits.push("SW");
+            fits.push('SW');
           }
           if (fits.length > 0) {
             if (fits.length === 1) {
-              fits.push("SE");
+              fits.push('SE');
             } else {
-              fits = ["SE"];
+              fits = ['SE'];
             }
           }
         }
@@ -366,7 +366,7 @@
 
     Quadtree.prototype.where = function(query) {
       var check, elt, fifo, items, j, k, key, len, len1, ref, ref1, relatedChild, top;
-      if (typeof query === "object" && ((query.x == null) || (query.y == null))) {
+      if (typeof query === 'object' && ((query.x == null) || (query.y == null))) {
         return this.find(function(elt) {
           var check, key;
           check = true;
@@ -540,18 +540,18 @@
 
     Quadtree.prototype.pretty = function() {
       var child, fifo, indent, indentation, isParent, str, top;
-      str = "";
+      str = '';
       indent = function(level) {
         var j, ref, res, times;
-        res = "";
+        res = '';
         for (times = j = ref = level; ref <= 0 ? j < 0 : j > 0; times = ref <= 0 ? ++j : --j) {
-          res += "   ";
+          res += '   ';
         }
         return res;
       };
       fifo = [
         {
-          label: "ROOT",
+          label: 'ROOT',
           tree: this,
           level: 0
         }

@@ -12,7 +12,7 @@
     else if typeof exports is 'object' and module.exports
         module.exports = factory()
     else
-        root["Quadtree"] = factory()
+        root['Quadtree'] = factory()
 ) @, (-> class Quadtree
     # The Quadtree class
     # -------------------
@@ -23,10 +23,10 @@
     # - width / length : dimensions of the quadtree. [ *mandatory* ]
     # - maxElements : the maximum number of elements before the leaf 'splits' into subtrees. [ *defaults to 1* ]
     # - x / y : these coordinates are used internally by the library to position subtrees. [ *internal use only* ]
-    constructor: ({@x, @y, @width, @height, @maxElements}) ->
+    constructor: ({ @x, @y, @width, @height, @maxElements }) ->
 
         # An error is thrown when the width & length are not passed as constructor arguments.
-        throw new Error "Missing quadtree dimensions." if not @width? or not @height?
+        throw new Error 'Missing quadtree dimensions.' if not @width? or not @height?
         @x ?= 0
         @y ?= 0
         @maxElements ?= 1
@@ -35,16 +35,16 @@
         @size = 0
 
         # Dimension & coordinates are checked, an error is thrown in case of bad input.
-        throw new Error "Dimensions must be positive integers." if @width < 1 or @height < 1
-        throw new Error "Coordinates must be integers" if not Number.isInteger(@x) or not Number.isInteger(@y)
-        throw new Error "The maximum number of elements before a split must be a positive integer." if @maxElements < 1
+        throw new Error 'Dimensions must be positive integers.' if @width < 1 or @height < 1
+        throw new Error 'Coordinates must be integers' if not Number.isInteger(@x) or not Number.isInteger(@y)
+        throw new Error 'The maximum number of elements before a split must be a positive integer.' if @maxElements < 1
 
         that = @
 
         # The subtrees list, by position.
         @children = {
             # Northwest tree.
-            "NW":
+            NW:
                 create: ->
                     new Quadtree({
                         x: that.x
@@ -55,7 +55,7 @@
                     })
                 tree: null
             # Northeast tree.
-            "NE":
+            NE:
                 create: ->
                     new Quadtree({
                         x: that.x + Math.max (Math.floor that.width / 2), 1
@@ -66,7 +66,7 @@
                     })
                 tree: null
             # Southwest tree.
-            "SW":
+            SW:
                 create: ->
                     new Quadtree({
                         x: that.x
@@ -77,7 +77,7 @@
                     })
                 tree: null
             # Southeast tree.
-            "SE":
+            SE:
                 create: ->
                     new Quadtree({
                         x: that.x + Math.max (Math.floor that.width / 2), 1
@@ -112,20 +112,20 @@
         quadCenter = getCenter tree
 
         if element.x < quadCenter.x
-            if element.y < quadCenter.y then "NW"
-            else "SW"
+            if element.y < quadCenter.y then 'NW'
+            else 'SW'
         else
-            if element.y < quadCenter.y then "NE"
-            else "SE"
+            if element.y < quadCenter.y then 'NE'
+            else 'SE'
 
     # Validates a potential element of the tree.
     validateElement = (element) ->
-        if not (typeof element is "object")
-            throw new Error "Element must be an Object."
+        if not (typeof element is 'object')
+            throw new Error 'Element must be an Object.'
         if not element.x? or not element.y?
-            throw new Error "Coordinates properties are missing."
+            throw new Error 'Coordinates properties are missing.'
         if element?.width < 0 or element?.height < 0
-            throw new Error "Width and height must be positive integers."
+            throw new Error 'Width and height must be positive integers.'
 
     # Returns splitted coordinates and dimensions.
     splitTree = (tree) ->
@@ -133,25 +133,25 @@
         rightWidth   = Math.ceil tree.width / 2
         topHeight    = Math.max (Math.floor tree.height / 2), 1
         bottomHeight = Math.ceil tree.height / 2
-        "NW":
+        NW:
             x: tree.x
             y: tree.y
-            width:  leftWidth
+            width: leftWidth
             height: topHeight
-        "NE":
+        NE:
             x: tree.x + leftWidth
             y: tree.y
-            width:  rightWidth
+            width: rightWidth
             height: topHeight
-        "SW":
+        SW:
             x: tree.x
             y: tree.y + topHeight
-            width:  leftWidth
+            width: leftWidth
             height: bottomHeight
-        "SE":
+        SE:
             x: tree.x + leftWidth
             y: tree.y + topHeight
-            width:  rightWidth
+            width: rightWidth
             height: bottomHeight
 
     # Determines wether an element fits into subtrees.
@@ -174,10 +174,10 @@
                     @["_#{propName}"]
                 configurable: true
             }
-        writeAccessors "x"
-        writeAccessors "y"
-        writeAccessors "width"
-        writeAccessors "height"
+        writeAccessors 'x'
+        writeAccessors 'y'
+        writeAccessors 'width'
+        writeAccessors 'height'
 
     # ### Exposed methods
 
@@ -187,7 +187,7 @@
         @pushAll([item], doObserve)
 
     # Push an array of elements.
-    pushAll : (items, doObserve) ->
+    pushAll: (items, doObserve) ->
         for item in items
             validateElement item
             observe item, @ if doObserve
@@ -197,7 +197,7 @@
         while fifo.length > 0
             { tree, elements } = fifo.shift()
 
-            fifoCandidates = { "NW": null, "NE": null, "SW": null, "SE": null }
+            fifoCandidates = { NW: null, NE: null, SW: null, SE: null }
 
             for element in elements
                 tree.size++
@@ -233,13 +233,13 @@
         validateElement item
 
         index = @oversized.indexOf item
-        if index > - 1
+        if index > -1
             @oversized.splice index, 1
             @size--
             return true
 
         index = @contents.indexOf item
-        if index > - 1
+        if index > -1
             @contents.splice index, 1
             @size--
             return true
@@ -283,11 +283,11 @@
             if fits.length is 0
                 fits = []
                 if item.x >= top.x + top.width
-                    fits.push "NE"
+                    fits.push 'NE'
                 if item.y >= top.y + top.height
-                    fits.push "SW"
+                    fits.push 'SW'
                 if fits.length > 0
-                    if fits.length is 1 then fits.push "SE" else fits = ["SE"]
+                    if fits.length is 1 then fits.push 'SE' else fits = ['SE']
 
             for child in fits when top.children[child].tree?
                 fifo.push top.children[child].tree
@@ -300,7 +300,7 @@
     # Returns an array of elements that match the `query` argument.
     where: (query) ->
         # Naïve parsing (missing coordinates)
-        if typeof query is "object" and (not query.x? or not query.y?)
+        if typeof query is 'object' and (not query.x? or not query.y?)
             return @find (elt) ->
                 check = true
                 for key of query when query[key] isnt elt[key] then check = false
@@ -400,14 +400,14 @@
 
     # Pretty printing function.
     pretty: ->
-        str = ""
+        str = ''
 
         indent = (level) ->
-            res = ""
-            res += "   " for times in [level...0]
+            res = ''
+            res += '   ' for times in [level...0]
             res
 
-        fifo  = [{ label: "ROOT", tree: @, level: 0 }]
+        fifo  = [{ label: 'ROOT', tree: @, level: 0 }]
         while fifo.length > 0
             top = fifo.shift()
             indentation = indent(top.level)

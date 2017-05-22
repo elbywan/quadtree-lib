@@ -167,7 +167,7 @@
             item["_#{propName}"] = item[propName]
             Object.defineProperty item, propName, {
                 set: (val) ->
-                    tree.remove @
+                    tree.remove @, true
                     @["_#{propName}"] = val
                     tree.push @
                 get: ->
@@ -178,6 +178,18 @@
         writeAccessors 'y'
         writeAccessors 'width'
         writeAccessors 'height'
+
+    # Remove getters and setters and restore previous properties
+    unobserve = (item) ->
+        unwriteAccessors = (propName) ->
+            if not item["_#{propName}"]? then return
+            delete item[propName]
+            item[propName] = item["_#{propName}"]
+            delete item["_#{propName}"]
+        unwriteAccessors 'x'
+        unwriteAccessors 'y'
+        unwriteAccessors 'width'
+        unwriteAccessors 'height'
 
     # ### Exposed methods
 
@@ -229,24 +241,26 @@
         @
 
     # Removes an element from the quadtree.
-    remove: (item) ->
+    remove: (item, stillObserve) ->
         validateElement item
 
         index = @oversized.indexOf item
         if index > -1
             @oversized.splice index, 1
             @size--
+            if not stillObserve then unobserve item
             return true
 
         index = @contents.indexOf item
         if index > -1
             @contents.splice index, 1
             @size--
+            if not stillObserve then unobserve item
             return true
 
         relatedChild = @children[calculateDirection item, @]
 
-        if relatedChild.tree? and relatedChild.tree.remove item
+        if relatedChild.tree? and relatedChild.tree.remove item, stillObserve
             @size--
             relatedChild.tree = null if relatedChild.tree.size is 0
             return true

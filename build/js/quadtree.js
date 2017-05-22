@@ -9,7 +9,7 @@
 })(this, (function() {
   var Quadtree;
   return Quadtree = (function() {
-    var boundingBoxCollision, calculateDirection, fitting, getCenter, observe, splitTree, validateElement;
+    var boundingBoxCollision, calculateDirection, fitting, getCenter, observe, splitTree, unobserve, validateElement;
 
     function Quadtree(arg) {
       var child, that;
@@ -197,7 +197,7 @@
         item["_" + propName] = item[propName];
         return Object.defineProperty(item, propName, {
           set: function(val) {
-            tree.remove(this);
+            tree.remove(this, true);
             this["_" + propName] = val;
             return tree.push(this);
           },
@@ -211,6 +211,22 @@
       writeAccessors('y');
       writeAccessors('width');
       return writeAccessors('height');
+    };
+
+    unobserve = function(item) {
+      var unwriteAccessors;
+      unwriteAccessors = function(propName) {
+        if (item["_" + propName] == null) {
+          return;
+        }
+        delete item[propName];
+        item[propName] = item["_" + propName];
+        return delete item["_" + propName];
+      };
+      unwriteAccessors('x');
+      unwriteAccessors('y');
+      unwriteAccessors('width');
+      return unwriteAccessors('height');
     };
 
     Quadtree.prototype.push = function(item, doObserve) {
@@ -283,23 +299,29 @@
       return this;
     };
 
-    Quadtree.prototype.remove = function(item) {
+    Quadtree.prototype.remove = function(item, stillObserve) {
       var index, relatedChild;
       validateElement(item);
       index = this.oversized.indexOf(item);
       if (index > -1) {
         this.oversized.splice(index, 1);
         this.size--;
+        if (!stillObserve) {
+          unobserve(item);
+        }
         return true;
       }
       index = this.contents.indexOf(item);
       if (index > -1) {
         this.contents.splice(index, 1);
         this.size--;
+        if (!stillObserve) {
+          unobserve(item);
+        }
         return true;
       }
       relatedChild = this.children[calculateDirection(item, this)];
-      if ((relatedChild.tree != null) && relatedChild.tree.remove(item)) {
+      if ((relatedChild.tree != null) && relatedChild.tree.remove(item, stillObserve)) {
         this.size--;
         if (relatedChild.tree.size === 0) {
           relatedChild.tree = null;

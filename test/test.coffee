@@ -265,6 +265,15 @@ describe 'quadtree', ->
         assert.equal quadtree.children['NW'].tree.size, 2
         assert.equal quadtree.oversized.indexOf(element0), 0
 
+        for element in elementArray
+            quadtree.remove element
+
+        element0.x = 0
+        element0.y = 0
+        element1.y = 1
+        assert.equal quadtree.size, 0
+
+
     it 'should get an element by any property', ->
         quadtree  = new Quadtree width: 100, height: 100
         quadtree.push e0 = x: 0, y: 0, animal: 'rabbit'

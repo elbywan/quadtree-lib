@@ -212,11 +212,15 @@ quadtree.find(function(element){
 
 ### Iterate over the elements
 
+Performs an action on each element of the Quadtree (breadth first traversal).
+
 ```javascript
 quadtree.each(function(element){
     console.log(element.color)
 })
 ```
+
+*Like some other data structures, it is strongly discouraged to update Quadtree elements (especially coordinates / dimensions) or the Quadtree itself while iterating on it.*
 
 ### Visit the tree nodes
 

@@ -187,6 +187,24 @@ var colliding = quadtree.colliding({
 
 ```
 
+### Perform an action on colliding elements
+
+Performs an action on every element that collides with the parameter 2d object.
+
+```javascript
+onCollision({
+    x: 10,
+    y: 20
+}, function(item) {
+    /* Action on colliding item */
+
+    // As with all iterative methods, modifying the quadtree or its contents is discouraged. //
+}, function(element1, element2){
+    /* Optional custom collision algorithm */
+    return // Place predicate here //
+})
+```
+
 ### Retrieve by properties
 
 Gets every element that match the parameter properties.
@@ -217,6 +235,8 @@ Performs an action on each element of the Quadtree (breadth first traversal).
 ```javascript
 quadtree.each(function(element){
     console.log(element.color)
+
+    // As with all iterative methods, modifying the quadtree or its contents is discouraged. //
 })
 ```
 
@@ -231,6 +251,8 @@ quadtree.visit(function(){
     // This function is called once for each node.
     // *this* is a pointer to the current node.
     console.log(this.contents)
+
+    // As with all iterative methods, modifying the quadtree or its contents is discouraged. //
 })
 ```
 

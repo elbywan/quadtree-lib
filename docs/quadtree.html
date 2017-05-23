@@ -414,10 +414,8 @@ You can change it by providing a function as a second argument.</p>
 </code></pre>
 
         
-          <div class='highlight'><pre>    colliding: <span class="hljs-function"><span class="hljs-params">(item, collisionFunction)</span> -&gt;</span>
+          <div class='highlight'><pre>    colliding: <span class="hljs-function"><span class="hljs-params">(item, collisionFunction = boundingBoxCollision)</span> -&gt;</span>
         validateElement item
-
-        collisionFunction ?= boundingBoxCollision
 
         items = []
         fifo  = [@]
@@ -448,6 +446,57 @@ You can change it by providing a function as a second argument.</p>
                 fifo.push top.children[child].tree
 
         items</pre></div>
+        
+      
+        
+        <p>Performs an action on elements which collides with the <code>item</code> argument.
+<code>item</code> being an object having x, y, width &amp; height properties.</p>
+
+        
+      
+        
+        <p>The default collision function is a basic bounding box algorithm.
+You can change it by providing a function as a third argument.</p>
+<pre><code class="lang-javascript">onCollision(
+   {<span class="hljs-attr">x</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">20</span>},
+   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>) </span>{ <span class="hljs-comment">/* stuff */</span> },
+   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element1, element2</span>)</span>{
+       <span class="hljs-keyword">return</span> <span class="hljs-comment">// Place predicate here //</span>
+})
+</code></pre>
+
+        
+          <div class='highlight'><pre>    onCollision: <span class="hljs-function"><span class="hljs-params">(item, callback, collisionFunction = boundingBoxCollision)</span> -&gt;</span>
+        validateElement item
+
+        fifo  = [@]
+
+        <span class="hljs-keyword">while</span> fifo.length &gt; <span class="hljs-number">0</span>
+            top = fifo.shift()
+
+            <span class="hljs-keyword">for</span> elt <span class="hljs-keyword">in</span> top.oversized <span class="hljs-keyword">when</span> elt <span class="hljs-keyword">isnt</span> item <span class="hljs-keyword">and</span> collisionFunction item, elt <span class="hljs-keyword">then</span> callback elt
+            <span class="hljs-keyword">for</span> elt <span class="hljs-keyword">in</span> top.contents  <span class="hljs-keyword">when</span> elt <span class="hljs-keyword">isnt</span> item <span class="hljs-keyword">and</span> collisionFunction item, elt <span class="hljs-keyword">then</span> callback elt
+
+            fits = fitting item, top</pre></div>
+        
+      
+        
+        <p>Special case for elements located outside of the quadtree on the right / bottom side</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> fits.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+                fits = []
+                <span class="hljs-keyword">if</span> item.x &gt;= top.x + top.width
+                    fits.push <span class="hljs-string">'NE'</span>
+                <span class="hljs-keyword">if</span> item.y &gt;= top.y + top.height
+                    fits.push <span class="hljs-string">'SW'</span>
+                <span class="hljs-keyword">if</span> fits.length &gt; <span class="hljs-number">0</span>
+                    <span class="hljs-keyword">if</span> fits.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> fits.push <span class="hljs-string">'SE'</span> <span class="hljs-keyword">else</span> fits = [<span class="hljs-string">'SE'</span>]
+
+            <span class="hljs-keyword">for</span> child <span class="hljs-keyword">in</span> fits <span class="hljs-keyword">when</span> top.children[child].tree?
+                fifo.push top.children[child].tree
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span></pre></div>
         
       
         

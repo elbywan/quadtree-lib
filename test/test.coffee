@@ -76,24 +76,38 @@ describe 'quadtree', ->
 
         assert.equal quadtree.size, 19
         assert.equal (quadtree.colliding element0)[0], element1
+        quadtree.onCollision element0, (i) -> assert.equal i, element1
         assert.equal (quadtree.colliding element1)[0], element0
+        quadtree.onCollision element1, (i) -> assert.equal i, element0
         assert.equal (quadtree.colliding element2)[0], element3
+        quadtree.onCollision element2, (i) -> assert.equal i, element3
         assert.equal (quadtree.colliding element3)[0], element2
+        quadtree.onCollision element3, (i) -> assert.equal i, element2
         assert.equal (quadtree.colliding element4).length, 0
+        quadtree.onCollision element4, (i) -> throw new Error('Unexpected collision.')
 
         microCollisions = quadtree.colliding element5
         assert.equal microCollisions.length, 3
+        counter = 0
+        quadtree.onCollision element5, (i) -> counter++
+        assert.equal counter, 3
 
         siblings = [element6, element7, element8]
         for sibling in siblings
             siblingsCollisions = quadtree.colliding sibling
             assert.equal siblingsCollisions.length, 1
+            counter = 0
+            quadtree.onCollision sibling, (i) -> counter++
+            assert.equal counter, 1
 
         outers = [element11, element12, element13, element14,
             element15, element16, element17, element18]
         for outer in outers
             outerCollisions = quadtree.colliding outer
             assert.equal outerCollisions.length, 1
+            counter = 0
+            quadtree.onCollision outer, (i) -> counter++
+            assert.equal counter, 1
 
         assert.equal (quadtree.colliding element9).length, 1
         assert.equal (quadtree.colliding element10).length, 1

@@ -277,10 +277,8 @@
     #    return // Place predicate here //
     #})
     #```
-    colliding: (item, collisionFunction) ->
+    colliding: (item, collisionFunction = boundingBoxCollision) ->
         validateElement item
-
-        collisionFunction ?= boundingBoxCollision
 
         items = []
         fifo  = [@]
@@ -307,6 +305,47 @@
                 fifo.push top.children[child].tree
 
         items
+
+    # Performs an action on elements which collides with the `item` argument.
+    # `item` being an object having x, y, width & height properties.
+
+    # The default collision function is a basic bounding box algorithm.
+    # You can change it by providing a function as a third argument.
+    #```javascript
+    #onCollision(
+    #    {x: 10, y: 20},
+    #    function(item) { /* stuff */ },
+    #    function(element1, element2){
+    #        return // Place predicate here //
+    #})
+    #```
+    onCollision: (item, callback, collisionFunction = boundingBoxCollision) ->
+        validateElement item
+
+        fifo  = [@]
+
+        while fifo.length > 0
+            top = fifo.shift()
+
+            for elt in top.oversized when elt isnt item and collisionFunction item, elt then callback elt
+            for elt in top.contents  when elt isnt item and collisionFunction item, elt then callback elt
+
+            fits = fitting item, top
+
+            # Special case for elements located outside of the quadtree on the right / bottom side
+            if fits.length is 0
+                fits = []
+                if item.x >= top.x + top.width
+                    fits.push 'NE'
+                if item.y >= top.y + top.height
+                    fits.push 'SW'
+                if fits.length > 0
+                    if fits.length is 1 then fits.push 'SE' else fits = ['SE']
+
+            for child in fits when top.children[child].tree?
+                fifo.push top.children[child].tree
+
+        return null
 
     # Alias of `where`.
     get: (query) ->

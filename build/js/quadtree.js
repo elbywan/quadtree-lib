@@ -333,10 +333,10 @@
 
     Quadtree.prototype.colliding = function(item, collisionFunction) {
       var child, elt, fifo, fits, items, j, k, l, len, len1, len2, ref, ref1, top;
-      validateElement(item);
       if (collisionFunction == null) {
         collisionFunction = boundingBoxCollision;
       }
+      validateElement(item);
       items = [];
       fifo = [this];
       while (fifo.length > 0) {
@@ -380,6 +380,56 @@
         }
       }
       return items;
+    };
+
+    Quadtree.prototype.onCollision = function(item, callback, collisionFunction) {
+      var child, elt, fifo, fits, j, k, l, len, len1, len2, ref, ref1, top;
+      if (collisionFunction == null) {
+        collisionFunction = boundingBoxCollision;
+      }
+      validateElement(item);
+      fifo = [this];
+      while (fifo.length > 0) {
+        top = fifo.shift();
+        ref = top.oversized;
+        for (j = 0, len = ref.length; j < len; j++) {
+          elt = ref[j];
+          if (elt !== item && collisionFunction(item, elt)) {
+            callback(elt);
+          }
+        }
+        ref1 = top.contents;
+        for (k = 0, len1 = ref1.length; k < len1; k++) {
+          elt = ref1[k];
+          if (elt !== item && collisionFunction(item, elt)) {
+            callback(elt);
+          }
+        }
+        fits = fitting(item, top);
+        if (fits.length === 0) {
+          fits = [];
+          if (item.x >= top.x + top.width) {
+            fits.push('NE');
+          }
+          if (item.y >= top.y + top.height) {
+            fits.push('SW');
+          }
+          if (fits.length > 0) {
+            if (fits.length === 1) {
+              fits.push('SE');
+            } else {
+              fits = ['SE'];
+            }
+          }
+        }
+        for (l = 0, len2 = fits.length; l < len2; l++) {
+          child = fits[l];
+          if (top.children[child].tree != null) {
+            fifo.push(top.children[child].tree);
+          }
+        }
+      }
+      return null;
     };
 
     Quadtree.prototype.get = function(query) {

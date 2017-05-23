@@ -6,6 +6,7 @@
 
 - Coffeescript linter (http://www.coffeelint.org/)
 - Unobserve elements on removal
+- Add onCollision method
 
 ## [1.0.6](https://github.com/elbywan/quadtree-lib/compare/1.0.5...1.0.6)
 

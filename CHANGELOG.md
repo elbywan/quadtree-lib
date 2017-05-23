@@ -1,12 +1,12 @@
 # Change log - quadtree-lib
 
-## HEAD
+## [1.0.7](https://github.com/elbywan/quadtree-lib/compare/1.0.6...1.0.7)
 
 ##### Added
 
-- Coffeescript linter (http://www.coffeelint.org/)
-- Unobserve elements on removal
-- Add onCollision method
+- [Coffeescript linter (http://www.coffeelint.org/)](https://github.com/elbywan/quadtree-lib/commit/40e774335d22b0b73a3c5017aa374e10a46f1a0f)
+- [Unobserve elements on removal](https://github.com/elbywan/quadtree-lib/commit/f6ecc001c66891ea1f3713b1afcd3e3e19b33be4)
+- [Add onCollision method](https://github.com/elbywan/quadtree-lib/commit/ec4f92cb77d3f05dfe9b45bd16c676f18b309559)
 
 ## [1.0.6](https://github.com/elbywan/quadtree-lib/compare/1.0.5...1.0.6)
 

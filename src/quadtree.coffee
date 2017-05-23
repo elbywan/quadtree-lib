@@ -273,7 +273,7 @@
     # The default collision function is a basic bounding box algorithm.
     # You can change it by providing a function as a second argument.
     #```javascript
-    #colliding({x: 10, y: 20}, function(element1, element2){
+    #colliding({x: 10, y: 20}, function(element1, element2) {
     #    return // Place predicate here //
     #})
     #```
@@ -386,7 +386,7 @@
 
     # For each element of the quadtree, performs the `action` function.
     #```javascript
-    #quad.each(function(item){ console.log(item) })
+    #quad.each(function(item) { console.log(item) })
     #```
     each: (action) ->
         fifo = [@]

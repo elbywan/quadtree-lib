@@ -51,6 +51,23 @@ declare class Quadtree<T extends Quadtree.QuadtreeItem> {
      *```
      */
     public colliding(item: Quadtree.QuadtreeItem, collisionFunction?: (elt1: T, elt2: T) => boolean) : Array<T>
+    /** Performs an action on elements which collides with the `item` argument.
+    * `item` being an object having x, y, width & height properties.
+    *
+    * The default collision function is a basic bounding box algorithm.
+    * You can change it by providing a function as a third argument.
+    *```javascript
+    *onCollision(
+    *   { x: 10, y: 20 },
+    *   function(item) {
+    *       // stuff //
+    *   },
+    *   function(element1, element2) {
+    *       return // Place predicate here //
+    *})
+    * ```
+    */
+    public onCollision(item: Quadtree.QuadtreeItem, callback: Function, collisionFunction ?: (elt1: T, elt2: T) => boolean) : void
     /**
      * Returns an array of elements that match the `query` argument.
      */

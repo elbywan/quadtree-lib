@@ -315,7 +315,7 @@
     #onCollision(
     #    {x: 10, y: 20},
     #    function(item) { /* stuff */ },
-    #    function(element1, element2){
+    #    function(element1, element2) {
     #        return // Place predicate here //
     #})
     #```

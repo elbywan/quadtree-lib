@@ -193,7 +193,7 @@
 
     # ### Exposed methods
 
-    # Removes all elements from the quadtree and restores pristine state.
+    # Removes all elements from the quadtree and restores it to pristine state.
     clear: ->
         @contents = []
         @oversized = []

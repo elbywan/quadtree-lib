@@ -29,6 +29,7 @@ the advantages of using the quadtree datastructure in certain situations.
 
 If you want to see the library in action :
 - [Collision demo](http://elbywan.github.io/quadtree-lib/demo/collisions/collisions.html)
+- [Movement demo](http://elbywan.github.io/quadtree-lib/demo/movement/movement.html)
 - [Mass demo](http://elbywan.github.io/quadtree-lib/demo/basic/basic.html)
 
 ## Setup
@@ -146,6 +147,14 @@ Removes an item by reference.
 
 ```javascript
 quadtree.remove(item)
+```
+
+### Clearing the tree
+
+Removes the tree contents and restores it to pristine state.
+
+```javascript
+quatree.clear()
 ```
 
 ### Filtering the tree

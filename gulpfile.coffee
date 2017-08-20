@@ -73,4 +73,7 @@ gulp.task 'doc', ['generatedoc', 'setupdemo', 'copyassets'], ->
         .pipe rename 'index.html'
         .pipe gulp.dest './docs'
 
+gulp.task 'watchdemo', ->
+    gulp.watch ['./demo/**'], ['setupdemo']
+
 gulp.task 'default', ['test']

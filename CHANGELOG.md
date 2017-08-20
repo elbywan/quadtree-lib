@@ -1,5 +1,14 @@
 # Change log - quadtree-lib
 
+## [1.0.8](https://github.com/elbywan/quadtree-lib/compare/1.0.7...1.0.8)
+
+##### Added
+
+- [Clear function](https://github.com/elbywan/quadtree-lib/commit/bff7a534185c3e4b127d7c5b9ad3d712f35e2e8c)
+- [Javascript linter (Eslint)](https://github.com/elbywan/quadtree-lib/commit/c6ec2412926a218880e6bc8d3877a6d0fcc5a1cf)
+- [Movement demo](https://github.com/elbywan/quadtree-lib/commit/a55695507a02597bcca059f35e354c5c87eb8d06)
+- [Demo .js refactoring](https://github.com/elbywan/quadtree-lib/commit/2ef03608849ee0cc8cf09cad8fbe82a1b1ad3aac)
+
 ## [1.0.7](https://github.com/elbywan/quadtree-lib/compare/1.0.6...1.0.7)
 
 ##### Added

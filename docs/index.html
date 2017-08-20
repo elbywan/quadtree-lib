@@ -314,6 +314,18 @@ collisions over 2d elements and more.</p>
         
       
         
+        <p>Clears the quadtree and removes all elements.</p>
+
+        
+          <div class='highlight'><pre>    clear: <span class="hljs-function">-&gt;</span>
+        @contents = []
+        @oversized = []
+        @size = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> child <span class="hljs-keyword">of</span> @children
+            @children[child].tree = <span class="hljs-literal">null</span></pre></div>
+        
+      
+        
         <p>Add an element to the quadtree.
 Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = …).</p>
 
@@ -408,7 +420,7 @@ Elements can be observed to reorganize them into the quadtree automatically when
         
         <p>The default collision function is a basic bounding box algorithm.
 You can change it by providing a function as a second argument.</p>
-<pre><code class="lang-javascript">colliding({<span class="hljs-attr">x</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">20</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element1, element2</span>)</span>{
+<pre><code class="lang-javascript">colliding({<span class="hljs-attr">x</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">20</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element1, element2</span>) </span>{
    <span class="hljs-keyword">return</span> <span class="hljs-comment">// Place predicate here //</span>
 })
 </code></pre>
@@ -460,7 +472,7 @@ You can change it by providing a function as a third argument.</p>
 <pre><code class="lang-javascript">onCollision(
    {<span class="hljs-attr">x</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">20</span>},
    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>) </span>{ <span class="hljs-comment">/* stuff */</span> },
-   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element1, element2</span>)</span>{
+   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element1, element2</span>) </span>{
        <span class="hljs-keyword">return</span> <span class="hljs-comment">// Place predicate here //</span>
 })
 </code></pre>
@@ -556,7 +568,7 @@ You can change it by providing a function as a third argument.</p>
       
         
         <p>For each element of the quadtree, performs the <code>action</code> function.</p>
-<pre><code class="lang-javascript">quad.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>)</span>{ <span class="hljs-built_in">console</span>.log(item) })
+<pre><code class="lang-javascript">quad.each(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>) </span>{ <span class="hljs-built_in">console</span>.log(item) })
 </code></pre>
 
         

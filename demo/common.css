@@ -54,6 +54,7 @@ p.intro {
     color: #CFD8DC;
     padding: 0px 10px;
     padding-bottom: 5px;
+    user-select: none;
 }
 
 p.intro input {
@@ -81,6 +82,7 @@ div#canvas-container {
     margin-right: auto;
     box-shadow: 1px 1px 50px;
     background-color: #212121;
+    user-select: none;
 }
 
 #counter {
@@ -88,4 +90,5 @@ div#canvas-container {
     color: #E53945;
     border: 1px solid #E53945;
     margin: 10px;
+    user-select: none;
 }

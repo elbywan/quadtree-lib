@@ -19,6 +19,11 @@ declare class Quadtree<T extends Quadtree.QuadtreeItem> {
     })
 
     /**
+     * Removes all elements from the quadtree and restores pristine state.
+     */
+    public clear() : void
+
+    /**
      * Add an element to the quadtree.
      *
      * Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = ...).

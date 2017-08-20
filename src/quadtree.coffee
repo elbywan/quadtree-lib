@@ -193,6 +193,14 @@
 
     # ### Exposed methods
 
+    # Removes all elements from the quadtree and restores pristine state.
+    clear: ->
+        @contents = []
+        @oversized = []
+        @size = 0
+        for child of @children
+            @children[child].tree = null
+
     # Add an element to the quadtree.
     # Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = ...).
     push: (item, doObserve) ->

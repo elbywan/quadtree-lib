@@ -229,6 +229,18 @@
       return unwriteAccessors('height');
     };
 
+    Quadtree.prototype.clear = function() {
+      var child, results;
+      this.contents = [];
+      this.oversized = [];
+      this.size = 0;
+      results = [];
+      for (child in this.children) {
+        results.push(this.children[child].tree = null);
+      }
+      return results;
+    };
+
     Quadtree.prototype.push = function(item, doObserve) {
       return this.pushAll([item], doObserve);
     };

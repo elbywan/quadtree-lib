@@ -51,6 +51,20 @@ describe 'quadtree', ->
         assert.equal quadtree.remove(x: 10, y: 10), false
         assert.equal quadtree.size, 1
 
+    it 'should clean itself properly', ->
+        quadtree = new Quadtree width: 100, height: 100
+        quadtree.pushAll [
+            element0 =  x: 75,  y: 80, width: 10, height: 10,
+            element1 =  x: 80,  y: 85, width: 15, height: 10,
+            element2 =  x: 10,  y: 15, width: 1,  height: 1,
+            element3 =  x: 12,  y: 19, width: 1,  height: 1 ]
+        assert.equal quadtree.size, 4
+        assert.equal(quadtree.children.NW.tree.children.NW.tree.children.SE.tree.contents[0], element3)
+        quadtree.clear()
+        quadtree.pushAll [ element0, element1, element2, element3 ]
+        assert.equal quadtree.size, 4
+        assert.equal(quadtree.children.NW.tree.children.NW.tree.children.SE.tree.contents[0], element3)
+
     it 'should detect colliding elements', ->
         quadtree = new Quadtree width: 100, height: 100
         quadtree.pushAll [

@@ -113,5 +113,5 @@ declare class Quadtree<T extends Quadtree.QuadtreeItem> {
 }
 
 declare namespace Quadtree {
-    export type QuadtreeItem = { x: number, y: number, width?: number, height?: number }
+    export type QuadtreeItem = { x: number, y: number, width?: number, height?: number, [extras: string]: any }
 }

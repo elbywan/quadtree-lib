@@ -1,5 +1,12 @@
 # Change log - quadtree-lib
 
+## [1.0.9](https://github.com/elbywan/quadtree-lib/compare/1.0.8...1.0.9)
+
+##### Fixed
+
+- [Relaxed the QuadtreeItem type](https://github.com/elbywan/quadtree-lib/commit/5da28915ccd1d5412bb30e1c7baf199400d9ffe0)
+- [Fix mass demo input reference](https://github.com/elbywan/quadtree-lib/commit/6551d58d0b37c2ae3c7a200cc977a1c8e2d10197)
+
 ## [1.0.8](https://github.com/elbywan/quadtree-lib/compare/1.0.7...1.0.8)
 
 ##### Added

@@ -27,12 +27,12 @@
         "gulp-filter": "^5.0.0",
         "gulp-istanbul": "^1.1.1",
         "gulp-minify-html": "^1.0.4",
-        "gulp-mocha": "^3.0.1",
+        "gulp-mocha": "^8.0.0",
         "gulp-rename": "^1.2.2",
         "gulp-sourcemaps": "^2.6.0",
         "gulp-uglify": "^3.0.0",
         "istanbul": "^0.4.3",
-        "mocha": "^3.3.0",
+        "mocha": "^10.2.0",
         "traceur": "^0.0.111"
     },
     "scripts": {
